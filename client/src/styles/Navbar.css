@@ -1,0 +1,84 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #f2f2f2;
+}
+
+/* Logo */
+.navbar-logo {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-logo img {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
+
+.navbar-logo h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+/* Navbar Menu */
+.navbar-menu {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-menu a {
+  margin-right: 20px;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #333;
+  text-decoration: none;
+  transition: color 0.3s ease-in-out;
+}
+
+.navbar-menu a:hover {
+  color: #0077cc;
+}
+
+/* Dropdown Menu */
+.dropdown-item {
+  padding: 10px;
+  text-decoration: none;
+  display: block;
+  color: #333;
+}
+
+.dropdown-item:hover {
+  background-color: #f1f1f1;
+}
+
+/* Navbar Button */
+.navbar button {
+  transition: background-color 0.3s ease;
+}
+
+.navbar button:hover {
+  background-color: #00796b;
+}
+
+.navbar button.active {
+  background-color: #00796b;
+}
+
+.navbar button.active:hover {
+  background-color: #005f56;
+}
+
+/* Styling for .nav-link class */
+.nav-link {
+  color: #333;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease-in-out;
+}
+
+.nav-link:hover {
+  color: #00796b;
+}

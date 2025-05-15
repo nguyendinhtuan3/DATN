@@ -1,0 +1,74 @@
+.vocabulary-garden-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: "Arial", sans-serif;
+}
+
+.title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+.garden {
+  display: flex;
+  justify-content: space-between;
+}
+
+.garden-bed {
+  width: 60%;
+}
+
+.plants {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.plant {
+  padding: 10px 20px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-weight: bold;
+  text-align: center;
+  min-width: 100px;
+  border: 2px solid #ddd;
+}
+
+.plant.learned {
+  background-color: #c8e6c9; /* Light green for learned words */
+  border-color: #81c784; /* Darker green border */
+}
+
+.progress {
+  width: 35%;
+}
+
+.progress h3 {
+  text-align: center;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.progress-bar {
+  height: 20px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #81c784; /* Green color for progress */
+  border-radius: 10px;
+}
+
+.progress span {
+  display: block;
+  text-align: center;
+  font-weight: bold;
+}
