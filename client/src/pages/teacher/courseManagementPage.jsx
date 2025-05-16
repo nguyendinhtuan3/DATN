@@ -4,7 +4,7 @@ import { minigame } from '../../assets';
 import AddCourseModal from './AddCourseModal';
 import { fetchMyCourses, deleteCourse } from '../../api/courseService';
 import { showNotification } from '../../components/showNotification';
-
+import parse from 'html-react-parser';
 const CourseManagementPage = () => {
     const { user } = useAuthStore();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,7 +41,7 @@ const CourseManagementPage = () => {
             const res = await deleteCourse(id);
             showNotification(res.message, res.status);
             if (res.status) {
-                setCourses(courses.filter((course) => course.id !== id));
+                setCourses((prev) => prev.filter((course) => course._id !== id));
             }
         } catch (error) {
             showNotification('Lỗi khi xóa khóa học: ' + error.message, false);
@@ -62,7 +62,7 @@ const CourseManagementPage = () => {
             setCourses((prev) => {
                 if (editingCourse) {
                     // Update existing course
-                    return prev.map((course) => (course.id === updatedCourse.id ? updatedCourse : course));
+                    return prev.map((course) => (course._id === updatedCourse._id ? updatedCourse : course));
                 } else {
                     // Add new course
                     return [updatedCourse, ...prev];
@@ -108,14 +108,16 @@ const CourseManagementPage = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                     {courses.map((course) => (
-                        <div key={course.id} className="bg-white shadow-md rounded-md p-4 flex flex-col">
+                        <div key={course._id} className="bg-white shadow-md rounded-md p-4 flex flex-col">
                             {course.image ? (
                                 <img src={course.image} alt={course.title} className="h-24 object-cover rounded mb-4" />
                             ) : (
                                 <div className="h-24 bg-gray-100 rounded mb-4" />
                             )}
                             <div className="text-lg font-semibold mb-1">📖 {course.title}</div>
-                            <div className="text-sm mb-2">{course.description}</div>
+                            <div className="text-sm mb-2 truncate-trailing line-clamp-2 ">
+                                {parse(course.description)}
+                            </div>
                             <div className="text-xs text-gray-500 mb-4">Course Type: {course.courseTypeName}</div>
                             <div className="flex gap-2 mt-auto">
                                 <button
@@ -125,7 +127,7 @@ const CourseManagementPage = () => {
                                     Edit
                                 </button>
                                 <button
-                                    onClick={() => handleDelete(course.id)}
+                                    onClick={() => handleDelete(course._id)}
                                     className="bg-red-100 text-red-800 px-4 py-1 rounded-md text-sm hover:bg-red-200"
                                 >
                                     Delete

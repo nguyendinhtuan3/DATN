@@ -1,13 +1,37 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Input, Button, Avatar } from 'antd';
 import { SearchOutlined, TrophyOutlined, UserOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import Navbar from '../components/Navbar';
 import { AvatarLinhvat, garden, minigame, tower } from '../assets';
+import { fetchAllCourses } from '../api/courseService';
 import useAuthStore from '../store/authStore';
 
 const Home = () => {
+    const [courses, setCourses] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
     const { user } = useAuthStore();
+
+    useEffect(() => {
+        const fetchCourses = async () => {
+            try {
+                setLoading(true);
+                const res = await fetchAllCourses();
+                if (res.status && Array.isArray(res.data)) {
+                    setCourses(res.data);
+                } else {
+                    setError('Không có dữ liệu khóa học');
+                }
+            } catch (err) {
+                setError('Lỗi khi tải khóa học');
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchCourses();
+    }, []);
+
     return (
         <div className="w-full overflow-x-hidden bg-gradient-to-br from-blue-50 to-teal-50 min-h-screen">
             <main className="max-w-6xl mx-auto px-10 py-10">
@@ -25,15 +49,42 @@ const Home = () => {
                 </div>
 
                 {/* Intro Section */}
-                <div className="grid grid-cols-1 md:grid-cols-2  items-center mb-16">
-                    <div className="h-full bg-[#89CA9C] text-white p-8   shadow-lg">
+                <div className="grid grid-cols-1 md:grid-cols-2 items-center mb-16">
+                    <div className="h-full bg-[#89CA9C] text-white p-8 shadow-lg">
                         <h3 className="text-3xl font-bold mb-4">Conquer TOEIC with an Engaging Learning Experience!</h3>
                         <p className="text-lg">
                             Explore the "Vocabulary Garden" – where you can plant and grow your vocabulary, making
                             memorization easier and more enjoyable than ever.
                         </p>
                     </div>
-                    <img src={AvatarLinhvat} alt="Mascot" className="w-full h-auto  shadow-xl" />
+                    <img src={AvatarLinhvat} alt="Mascot" className="w-full h-auto shadow-xl" />
+                </div>
+
+                {/* Courses */}
+                <div className="mb-16">
+                    <h2 className="text-2xl font-bold text-teal-700 mb-6 text-center">Available Courses</h2>
+                    {loading && <p className="text-center text-gray-500">Đang tải khóa học...</p>}
+                    {error && <p className="text-center text-red-500">{error}</p>}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                        {courses.map((course) => (
+                            <div
+                                key={course._id}
+                                className="bg-white rounded-xl shadow-md p-4 flex flex-col justify-between hover:shadow-lg transition"
+                            >
+                                <div>
+                                    <h3 className="text-lg font-semibold mb-2">📘 {course.title}</h3>
+                                    <p className="text-sm text-gray-600 mb-4">{course.description}</p>
+                                    <span className="text-xs text-teal-600">Type: {course.courseTypeName}</span>
+                                </div>
+                                <Link
+                                    to={`/courses/${course._id}`}
+                                    className="mt-4 inline-block text-teal-600 text-sm font-semibold hover:underline"
+                                >
+                                    View Details →
+                                </Link>
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
                 {/* Start Button */}
@@ -50,7 +101,7 @@ const Home = () => {
                     </Link>
                 </div>
 
-                {/* Features Section */}
+                {/* Features */}
                 <h2 className="text-2xl font-bold text-center mb-8 text-teal-700">Highlight Features</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-20">
                     {[
@@ -82,7 +133,7 @@ const Home = () => {
                     ))}
                 </div>
 
-                {/* Leaderboard Section */}
+                {/* Leaderboard */}
                 <div className="bg-white rounded-2xl shadow-lg p-8">
                     <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-6 mb-6">
                         <div className="text-center">

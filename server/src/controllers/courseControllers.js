@@ -24,7 +24,7 @@ router.get('/my-courses', verifyRole('teacher'), async (req, res) => {
     }
 });
 
-// 📌 Create new course (teacher or admin only)
+// 📌 Create new course (teacher only)
 router.post('/', verifyRole('teacher'), async (req, res) => {
     try {
         const { title, courseTypeId, description, image, price, link } = req.body;
@@ -46,18 +46,20 @@ router.post('/', verifyRole('teacher'), async (req, res) => {
     }
 });
 
-// 📌 Update course (teacher or admin, must be owner)
+// 📌 Update course (must be teacher and owner)
 router.put('/:id', verifyRole('teacher'), async (req, res) => {
     try {
         const { title, courseTypeId, description, image, price, link } = req.body;
         const courseId = req.params.id;
 
         const conn = db.promise();
-        // Kiểm tra quyền sở hữu
+
+        // Check ownership
         const [courseRows] = await conn.query(`SELECT * FROM courses WHERE id = ? AND creatorId = ?`, [
             courseId,
             req.user.id,
         ]);
+
         if (courseRows.length === 0) {
             return res.status(403).json({ status: false, message: 'Không có quyền cập nhật khóa học này' });
         }
@@ -82,31 +84,33 @@ router.put('/:id', verifyRole('teacher'), async (req, res) => {
     }
 });
 
-// 📌 Delete course (teacher or admin, must be owner)
+// 📌 Delete course (must be teacher and owner)
 router.delete('/:id', verifyRole('teacher'), async (req, res) => {
     try {
         const conn = db.promise();
 
-        // Kiểm tra quyền sở hữu
+        // Check ownership
         const [courseRows] = await conn.query(`SELECT * FROM courses WHERE id = ? AND creatorId = ?`, [
             req.params.id,
             req.user.id,
         ]);
+
         if (courseRows.length === 0) {
             return res.status(403).json({ status: false, message: 'Không có quyền xóa khóa học này' });
         }
 
-        // Kiểm tra xem khóa học có bài học nào không
+        // Check related lessons
         const [lessonRows] = await conn.query(`SELECT COUNT(*) as total FROM lessons WHERE course_id = ?`, [
             req.params.id,
         ]);
+
         if (lessonRows[0].total > 0) {
             return res.status(200).json({
                 status: false,
                 message: `Không thể xóa khóa học vì có ${lessonRows[0].total} bài học liên quan. Hãy xóa các bài học trước.`,
             });
         }
-        // Nếu không có lesson liên quan, tiến hành xóa
+
         await conn.query(`DELETE FROM courses WHERE id = ?`, [req.params.id]);
         res.json({ status: true, message: 'Xóa course thành công' });
     } catch (error) {
@@ -115,7 +119,7 @@ router.delete('/:id', verifyRole('teacher'), async (req, res) => {
     }
 });
 
-// 📌 Get all courses (with optional filter by courseTypeId)
+// 📌 Get all courses (optionally filter by courseTypeId)
 router.get('/', async (req, res) => {
     try {
         const conn = db.promise();
@@ -143,11 +147,12 @@ router.get('/', async (req, res) => {
     }
 });
 
-// 📌 Get single course by ID
+// 📌 Get course by ID
 router.get('/:id', async (req, res) => {
     try {
         const conn = db.promise();
         const [rows] = await conn.query(`SELECT * FROM courses WHERE id = ?`, [req.params.id]);
+
         if (rows.length === 0) {
             return res.status(404).json({ status: false, message: 'Course không tồn tại' });
         }

@@ -9,7 +9,7 @@ const db = {
 
 // Danh sách model MySQL theo thứ tự load
 const mysqlModelsOrder = [
-    'Role.js',
+    'Role',
     'CourseType',
     'Badge.js',
     'ItemType.js',

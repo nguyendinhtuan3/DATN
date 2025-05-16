@@ -3,7 +3,7 @@ import CourseTypeSidebar from '../components/CourseTypeSidebar';
 import { fetchCourseTypes } from '../api/courseTypeService';
 import { fetchAllCourses } from '../api/courseService';
 import { showNotification } from '../components/showNotification';
-
+import parse from 'html-react-parser';
 const CourseListingPage = () => {
     const [courseTypes, setCourseTypes] = useState([]);
     const [courses, setCourses] = useState([]);
@@ -75,7 +75,9 @@ const CourseListingPage = () => {
 
                                 <div className="p-4">
                                     <div className="text-lg font-semibold mb-1">📖 {course.title}</div>
-                                    <div className="text-sm mb-2">{course.description}</div>
+                                    <div className="text-sm mb-2 truncate-trailing line-clamp-2 ">
+                                        {parse(course.description)}
+                                    </div>
                                     <div className="text-sm mb-1 flex items-center gap-2">
                                         🎯 <span>Course: {course.courseTypeName}</span>
                                     </div>
@@ -110,7 +112,9 @@ const CourseListingPage = () => {
                                 <h2 className="text-lg font-semibold border-b border-gray-300 pb-2 mb-4">
                                     Description
                                 </h2>
-                                <p className="text-gray-700 flex-1 overflow-auto">{selectedCourse.description}</p>
+                                <p className="text-gray-700 flex-1 overflow-auto">
+                                    {parse(selectedCourse.description)}
+                                </p>
                             </div>
                             <div className="w-full md:w-1/2 flex flex-col">
                                 <div className="bg-gray-50 p-4 rounded-lg mb-4 flex-1">
