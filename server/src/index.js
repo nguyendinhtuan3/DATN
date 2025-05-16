@@ -4,7 +4,6 @@ const authControllers = require('./controllers/authControllers');
 const courseControllers = require('./controllers/courseControllers');
 const courseTypeControllers = require('./controllers/courseTypeControllers');
 const userControllers = require('./controllers/userControllers');
-const roleControllers = require('./controllers/roleControllers');
 const typecourseControllers = require('./controllers/typecourseControllers');
 const lessonControlers = require('./controllers/lessonControlers');
 const connectDatabase = require('./config/connectDatabase');
@@ -17,9 +16,8 @@ app.use('/api', authControllers);
 app.use('/api/courses', courseControllers);
 app.use('/api/course-types', courseTypeControllers);
 app.use('/api/users', userControllers );
-app.use('/api/roles', roleControllers);
 app.use('/api/typecourse', typecourseControllers);
-app.use('/api/lesson', lessonControlers);
+app.use('/api/lessons', lessonControlers);
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {

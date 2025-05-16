@@ -1,6 +1,7 @@
 const express = require('express');
 const db = require('../../db');
 const { verifyRole } = require('../middlewares/auth');
+const nodemailer = require('nodemailer');
 
 const router = express.Router();
 
@@ -126,9 +127,12 @@ router.get('/', async (req, res) => {
         const { courseTypeId } = req.query;
 
         let query = `
-            SELECT c.*, ct.name AS courseTypeName
+            SELECT c.*, 
+                   ct.name AS courseTypeName,
+                   u.username AS creatorName
             FROM courses c
             LEFT JOIN course_types ct ON c.courseTypeId = ct.id
+            LEFT JOIN users u ON c.creatorId = u.id
         `;
         const queryParams = [];
 
@@ -161,6 +165,93 @@ router.get('/:id', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ status: false, message: 'Lấy course thất bại', details: error.message });
+    }
+});
+
+// Configure Nodemailer transporter
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+    },
+});
+
+// 📌 Confirm course payment and send course link via email
+router.post('/confirm-payment', verifyRole('student'), async (req, res) => {
+    const conn = db.promise();
+    const { courseId } = req.body;
+    const userId = req.user.id;
+    if (!courseId) {
+        return res.status(300).json({
+            status: false,
+            message: 'Yêu cầu cung cấp ID khóa học',
+        });
+    }
+    try {
+        await conn.beginTransaction();
+
+        // 📌 Truy vấn thông tin khóa học
+        const [[course]] = await conn.query(
+            `SELECT c.*, ct.name AS courseTypeName
+             FROM courses c
+             LEFT JOIN course_types ct ON c.courseTypeId = ct.id
+             WHERE c.id = ?`,
+            [courseId],
+        );
+
+        if (!course) {
+            await conn.rollback();
+            return res.status(300).json({
+                status: false,
+                message: 'Không tìm thấy khóa học',
+            });
+        }
+
+        // 📌 Truy vấn email của người dùng bằng userId
+        const [[user]] = await conn.query(`SELECT email FROM users WHERE id = ?`, [userId]);
+
+        if (!user || !user.email) {
+            await conn.rollback();
+            return res.status(300).json({
+                status: false,
+                message: 'Không tìm thấy email người dùng',
+            });
+        }
+
+        const userEmail = user.email;
+
+        // 📌 Gửi email
+        await transporter.sendMail({
+            from: process.env.EMAIL_USER,
+            to: userEmail,
+            subject: `Xác nhận đăng ký khóa học: ${course.title}`,
+            html: `
+                <h2>Xác nhận đăng ký khóa học</h2>
+                <p>Chào bạn,</p>
+                <p>Cảm ơn bạn đã đăng ký khóa học <strong>${course.title}</strong>!</p>
+                <p>Bạn có thể truy cập khóa học qua liên kết sau:</p>
+                <p><a href="${course.link}">${course.title}</a></p>
+                <p>Loại khóa học: ${course.courseTypeName || 'N/A'}</p>
+                <p>Giá: ${course.price} VND</p>
+                <p>Nếu có bất kỳ câu hỏi nào, vui lòng liên hệ với đội ngũ hỗ trợ của chúng tôi.</p>
+                <p>Trân trọng,<br>Đội ngũ nền tảng khóa học</p>
+            `,
+        });
+
+        await conn.commit();
+        res.json({
+            status: true,
+            message: 'Xác nhận thanh toán thành công, liên kết khóa học đã được gửi qua email',
+        });
+    } catch (error) {
+        await conn.rollback();
+        console.error('Lỗi xác nhận thanh toán:', error);
+        res.status(500).json({
+            status: false,
+            message: 'Xác nhận thanh toán thất bại',
+            details: error.message,
+        });
     }
 });
 

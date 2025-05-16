@@ -13,6 +13,7 @@ import useAuthStore from './store/authStore';
 import CourseListingPage from './pages/CourseListingPage';
 import CourseManagementPage from './pages/teacher/cource/courseManagementPage';
 import LessonManagementPage from './pages/teacher/lesson/LessonManagementPage';
+import PaymentConfirmPage from './pages/PaymentConfirmPage';
 
 const App = () => {
     // const [user, setUser] = useState(null);
@@ -133,7 +134,9 @@ const App = () => {
                             <Route path="/lesson-management" element={<LessonManagementPage />} />
                         </>
                     ) : (
-                        <></>
+                        <>
+                            <Route path="/payment-confirmation" element={<PaymentConfirmPage />} />
+                        </>
                     )}
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/courses" element={<CourseListingPage />} />

@@ -103,42 +103,6 @@ const Home = () => {
                         </div>
                     ))}
                 </div>
-
-                {/* Leaderboard */}
-                <div className="bg-white rounded-2xl shadow-lg p-8">
-                    <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-6 mb-6">
-                        <div className="text-center">
-                            <Avatar size={96} src="/trophy.png" icon={<TrophyOutlined />} className="bg-yellow-400" />
-                        </div>
-                        <div className="md:col-span-3">
-                            <h4 className="text-xl font-bold text-gray-800 mb-2">
-                                Do you have what it takes to rise to the top?
-                            </h4>
-                            <p className="text-gray-600">
-                                Track your progress and challenge your friends to reach the top of the leaderboard!
-                            </p>
-                            <hr className="my-4" />
-                            <h5 className="text-teal-700 font-semibold mb-4">Top Players This Week</h5>
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                {['ABC', 'DEF', 'IKM'].map((name, idx) => (
-                                    <div
-                                        key={idx}
-                                        className="bg-gray-50 p-4 rounded-lg shadow hover:shadow-md transition"
-                                    >
-                                        <div className="flex items-center gap-4">
-                                            <Avatar icon={<UserOutlined />} />
-                                            <div>
-                                                <span className="font-semibold">{name}</span>
-                                                <br />
-                                                <small className="text-gray-500">{idx + 1}st place</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </main>
         </div>
     );

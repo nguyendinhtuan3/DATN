@@ -34,11 +34,7 @@ Lesson.init(
                 model: 'courses',
                 key: 'id',
             },
-        },
-        link: {
-      type: DataTypes.STRING(500),
-      allowNull: true, // hoặc false nếu bắt buộc có link
-    },
+        }
     },
     {
         sequelize,

@@ -150,9 +150,14 @@ function AddCourseModal({ isOpen, onClose, editingCourse }) {
     };
 
     if (!isOpen) return null;
-
+        
+const handleOverlayClick = (e) => {
+        if (e.target === e.currentTarget) {
+            onClose(null); // Close modal when clicking outside
+        }
+    };
     return (
-        <Overlay onClick={() => onClose(null)} className={'z-[1000]'}>
+        <Overlay onClick={handleOverlayClick} className={'z-[1000]'}>
             <div className="bg-white  w-1/2 max-h-[90vh] overflow-y-auto rounded-lg shadow-lg p-6">
                 <div className="flex justify-between items-center mb-4 border-b pb-2">
                     <h3 className="text-lg font-semibold">{editingCourse ? '✏️ Sửa Khóa Học' : '➕ Thêm Khóa Học'}</h3>
