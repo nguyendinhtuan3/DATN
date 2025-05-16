@@ -6,8 +6,9 @@ const API_URL = import.meta.env.VITE_API_URL;
  * 📌 Lấy danh sách tất cả khóa học
  * Không cần truyền dữ liệu đầu vào
  */
-export const fetchAllCourses = async () => {
-    const response = await apiClient.get(`${API_URL}/api/courses`);
+export const fetchAllCourses = async (courseTypeId) => {
+    const params = courseTypeId ? { courseTypeId } : {};
+    const response = await apiClient.get(`${API_URL}/api/courses`, { params });
     return response.data;
 };
 

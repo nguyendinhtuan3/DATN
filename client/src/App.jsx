@@ -12,6 +12,7 @@ import ProfilePage from './pages/ProfilePage';
 import useAuthStore from './store/authStore';
 import CourseManagement from './pages/admin/CourseManagement';
 import CourseManagementPage from './pages/teacher/courseManagementPage';
+import CourseListingPage from './pages/CourseListingPage';
 
 const App = () => {
     // const [user, setUser] = useState(null);
@@ -129,9 +130,10 @@ const App = () => {
                     ) : user.role === 'teacher' ? (
                         <Route path="/course-management" element={<CourseManagementPage />} />
                     ) : (
-                        <Route path="/profile" element={<ProfilePage />} />
+                        <></>
                     )}
                     <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/courses" element={<CourseListingPage />} />
                     <Route path="/forgot-password" element={<ForgotPassword />} />
                     <Route path="/reset-password" element={<ResetPassword />} />
                     <Route path="*" element={<Home />} />

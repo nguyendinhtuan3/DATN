@@ -43,7 +43,7 @@ Course.init(
             primaryKey: true,
             allowNull: false,
         },
-        name: {
+        title: {
             type: DataTypes.STRING(255),
             allowNull: false,
         },
@@ -67,11 +67,6 @@ Course.init(
         link: {
             type: DataTypes.STRING(255), // link nên là STRING chứ không phải DECIMAL
             allowNull: true,
-        },
-        status: {
-            type: DataTypes.ENUM('active', 'inactive'),
-            allowNull: false,
-            defaultValue: 'active',
         },
         creatorId: {
             type: DataTypes.UUID,

@@ -1,51 +1,96 @@
 import { useEffect, useState } from 'react';
 import { fetchCourseTypes } from '../../api/courseTypeService';
+import ImageCropper from '../../components/ImageCropper';
+import { apiUploadImage } from '../../services/uploadPicture.service';
+import { showNotification } from '../../components/showNotification';
+import InputEditor from '../../components/InputEditor';
+import { createCourse, updateCourse } from '../../api/courseService';
 
-function AddCourseModal({ isOpen, onClose, onAddCourse }) {
+function AddCourseModal({ isOpen, onClose, editingCourse }) {
     const [courseTypes, setCourseTypes] = useState([]);
     const [loadingTypes, setLoadingTypes] = useState(false);
     const [loadingSubmit, setLoadingSubmit] = useState(false);
-    const [errorTypes, setErrorTypes] = useState(null);
     const [formError, setFormError] = useState('');
+    const [isLoadingImage, setIsLoadingImage] = useState(false);
 
     const [formData, setFormData] = useState({
-        name: '',
-        target: '',
-        price: '',
+        title: '',
+        courseTypeId: '',
         description: '',
+        image: '',
+        price: '',
         link: '',
     });
 
     useEffect(() => {
         if (!isOpen) return;
 
+        // Initialize formData with editingCourse data if provided
+        if (editingCourse) {
+            setFormData({
+                title: editingCourse.title || '',
+                courseTypeId: editingCourse.courseTypeId || '',
+                description: editingCourse.description || '',
+                image: editingCourse.image || '',
+                price: editingCourse.price || '',
+                link: editingCourse.link || '',
+            });
+        } else {
+            setFormData({
+                title: '',
+                courseTypeId: '',
+                description: '',
+                image: '',
+                price: '',
+                link: '',
+            });
+        }
+
         const fetchTypes = async () => {
             setLoadingTypes(true);
-            setErrorTypes(null);
             try {
                 const response = await fetchCourseTypes();
                 setCourseTypes(response?.data || []);
             } catch (error) {
-                setErrorTypes(error.message || 'Lỗi tải danh sách loại khóa học');
+                console.error('Lỗi khi lấy loại khóa học:', error);
+                showNotification('Không thể tải danh sách loại khóa học.', false);
             } finally {
                 setLoadingTypes(false);
             }
         };
 
         fetchTypes();
-    }, [isOpen]);
+    }, [isOpen, editingCourse]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const { name, target, price, description, link } = formData;
+        const { title, courseTypeId, price, description, link } = formData;
 
-        if (!name || !target || !price || !description || !link) {
-            setFormError('Vui lòng điền đầy đủ tất cả các trường.');
+        // Validate required fields
+        if (!title || !courseTypeId || !price || !description || !link) {
+            showNotification('Vui lòng điền đầy đủ tất cả các trường bắt buộc.', false);
+            return;
+        }
+
+        // Validate price
+        if (parseFloat(price) < 0) {
+            showNotification('Giá phải là số không âm.', false);
+            return;
+        }
+
+        // Validate link (basic URL check)
+        try {
+            new URL(link);
+        } catch {
+            showNotification('Liên kết phải là một URL hợp lệ.', false);
             return;
         }
 
@@ -53,16 +98,53 @@ function AddCourseModal({ isOpen, onClose, onAddCourse }) {
         setLoadingSubmit(true);
 
         try {
-            // Gọi hàm thêm khóa học (ví dụ từ prop onAddCourse)
-            if (onAddCourse) {
-                await onAddCourse(formData);
+            let res;
+            if (editingCourse) {
+                // Update existing course
+                res = await updateCourse(editingCourse.id, formData);
+                showNotification('Cập nhật thành công', true);
+            } else {
+                // Create new course
+                res = await createCourse(formData);
+                showNotification('Thêm khóa học thành công', true);
             }
-            onClose(); // Đóng modal sau khi thành công
-            setFormData({ name: '', target: '', price: '', description: '', link: '' });
+
+            if (res.status) {
+                // Pass the new/updated course back to parent
+                onClose(res.data);
+                setFormData({
+                    title: '',
+                    courseTypeId: '',
+                    price: '',
+                    description: '',
+                    link: '',
+                    image: '',
+                });
+            }
         } catch (err) {
-            setFormError(err.message || 'Đã xảy ra lỗi khi thêm khóa học.');
+            setFormError(err.message || 'Đã xảy ra lỗi khi lưu khóa học.');
+            showNotification('Không thể lưu khóa học. Vui lòng thử lại.', false);
         } finally {
             setLoadingSubmit(false);
+        }
+    };
+
+    const handleImageUpload = async (image) => {
+        setIsLoadingImage(true);
+        try {
+            const formData = new FormData();
+            formData.append('file', image);
+            formData.append('upload_preset', import.meta.env.VITE_REACT_UPLOAD_PRESET);
+            const response = await apiUploadImage(formData);
+            setFormData((prev) => ({
+                ...prev,
+                image: response.url,
+            }));
+        } catch (error) {
+            console.error('Lỗi khi tải ảnh:', error);
+            showNotification('Không thể tải ảnh lên. Vui lòng thử lại.', false);
+        } finally {
+            setIsLoadingImage(false);
         }
     };
 
@@ -70,68 +152,67 @@ function AddCourseModal({ isOpen, onClose, onAddCourse }) {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-            <div className="bg-white w-full max-w-md max-h-[90vh] overflow-y-auto rounded-lg shadow-lg p-6">
+            <div className="bg-white w-full w-1/2 max-h-[90vh] overflow-y-auto rounded-lg shadow-lg p-6">
                 <div className="flex justify-between items-center mb-4 border-b pb-2">
-                    <h3 className="text-lg font-semibold">➕ Add Course</h3>
+                    <h3 className="text-lg font-semibold">{editingCourse ? '✏️ Sửa Khóa Học' : '➕ Thêm Khóa Học'}</h3>
                     <button
                         className="text-gray-500 hover:text-red-500 text-xl"
-                        onClick={onClose}
-                        aria-label="Close modal"
+                        onClick={() => onClose(null)}
+                        aria-label="Đóng modal"
                     >
                         ×
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-4">
                     {formError && <p className="text-red-500 text-sm">{formError}</p>}
+                    <div>
+                        <label className="block text-sm font-medium mb-2">Hình ảnh khóa học</label>
+                        <ImageCropper
+                            width={460}
+                            height={260}
+                            label="Thêm hình ảnh"
+                            idName="image"
+                            onCropComplete={handleImageUpload}
+                        />
+                        {formData.image && (
+                            <img src={formData.image} alt="Banner" className="mt-2 w-full rounded shadow" />
+                        )}
+                    </div>
 
                     <div>
-                        <label htmlFor="name" className="block text-sm font-medium">
-                            Course Name
-                        </label>
+                        <label className="block text-sm font-medium">Tên khóa học</label>
                         <input
-                            id="name"
-                            name="name"
-                            value={formData.name}
+                            name="title"
+                            value={formData.title}
                             onChange={handleChange}
                             className="w-full border rounded px-3 py-2"
                             required
-                            disabled={loadingSubmit}
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="target" className="block text-sm font-medium">
-                            Target
-                        </label>
+                        <label className="block text-sm font-medium">Loại khóa học</label>
                         <select
-                            id="target"
-                            name="target"
-                            value={formData.target}
+                            name="courseTypeId"
+                            value={formData.courseTypeId}
                             onChange={handleChange}
                             className="w-full border rounded px-3 py-2"
                             required
-                            disabled={loadingSubmit || loadingTypes}
+                            disabled={loadingTypes}
                         >
-                            <option value="">-- Select --</option>
-                            {loadingTypes && <option>Loading...</option>}
-                            {errorTypes && <option disabled>Error: {errorTypes}</option>}
-                            {!loadingTypes &&
-                                !errorTypes &&
-                                courseTypes.map((type) => (
-                                    <option key={type.id} value={type.id}>
-                                        {type.name}
-                                    </option>
-                                ))}
+                            <option value="">-- Chọn loại khóa học --</option>
+                            {courseTypes.map((type) => (
+                                <option key={type.id} value={type.id}>
+                                    {type.name}
+                                </option>
+                            ))}
                         </select>
                     </div>
 
                     <div>
-                        <label htmlFor="price" className="block text-sm font-medium">
-                            Course Price
-                        </label>
+                        <label className="block text-sm font-medium">Giá</label>
                         <input
-                            id="price"
                             name="price"
                             type="number"
                             min="0"
@@ -139,50 +220,42 @@ function AddCourseModal({ isOpen, onClose, onAddCourse }) {
                             onChange={handleChange}
                             className="w-full border rounded px-3 py-2"
                             required
-                            disabled={loadingSubmit}
                         />
                     </div>
+                    <InputEditor label="Mô Tả" value={formData.description} setValue={setFormData} />
 
-                    <div>
-                        <label htmlFor="description" className="block text-sm font-medium">
-                            Description
-                        </label>
+                    {/* <div>
+                        <label className="block text-sm font-medium">Mô tả</label>
                         <textarea
-                            id="description"
                             name="description"
+                            rows="3"
                             value={formData.description}
                             onChange={handleChange}
                             className="w-full border rounded px-3 py-2"
-                            rows="4"
                             required
-                            disabled={loadingSubmit}
                         />
-                    </div>
+                    </div> */}
 
                     <div>
-                        <label htmlFor="link" className="block text-sm font-medium">
-                            Course Link
-                        </label>
+                        <label className="block text-sm font-medium">Liên kết</label>
                         <textarea
-                            id="link"
                             name="link"
+                            rows="2"
                             value={formData.link}
                             onChange={handleChange}
                             className="w-full border rounded px-3 py-2"
-                            rows="2"
                             required
-                            disabled={loadingSubmit}
                         />
                     </div>
 
                     <button
-                        type="submit"
-                        className="w-full bg-[#e1effa] text-black font-semibold py-2 rounded-md hover:bg-[#cbe0f0] disabled:opacity-50"
-                        disabled={loadingSubmit}
+                        className="w-full bg-blue-500 text-white font-semibold py-2 rounded-md hover:bg-blue-600 disabled:opacity-50"
+                        disabled={loadingSubmit || isLoadingImage}
+                        onClick={handleSubmit}
                     >
-                        {loadingSubmit ? 'Adding...' : 'Add'}
+                        {loadingSubmit ? 'Đang lưu...' : editingCourse ? 'Cập nhật khóa học' : 'Thêm khóa học'}
                     </button>
-                </form>
+                </div>
             </div>
         </div>
     );

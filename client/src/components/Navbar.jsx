@@ -20,7 +20,7 @@ const Navbar = () => {
     };
 
     const getNavLinkStyle = ({ isActive }) => ({
-        color: 'white',
+        color: isActive ? 'white' : 'black',
         fontWeight: isActive ? 'bold' : 'normal',
         textDecoration: 'none',
     });
@@ -36,7 +36,10 @@ const Navbar = () => {
                 <img className="w-20" src={Logo} />
             </Link>
 
-            <div className="space-x-6 flex items-center">
+            <div className="space-x-6 flex items-center ">
+                <NavLink to="/" style={getNavLinkStyle}>
+                    Home
+                </NavLink>
                 <NavLink to="/courses" style={getNavLinkStyle}>
                     Courses
                 </NavLink>
@@ -46,18 +49,6 @@ const Navbar = () => {
                 <NavLink to="/garden" style={getNavLinkStyle}>
                     Garden
                 </NavLink>
-
-                <div className="relative group">
-                    <span className="text-white cursor-pointer">TOEIC</span>
-                    <div className="absolute top-full left-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity duration-200">
-                        <Link to="/toeic/reading" className="dropdown-item block px-4 py-2 hover:bg-gray-100">
-                            Reading
-                        </Link>
-                        <Link to="/toeic/listening" className="dropdown-item block px-4 py-2 hover:bg-gray-100">
-                            Listening
-                        </Link>
-                    </div>
-                </div>
 
                 <NavLink to="/testing" style={getNavLinkStyle}>
                     Testing
