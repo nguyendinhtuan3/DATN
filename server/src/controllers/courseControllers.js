@@ -23,7 +23,7 @@ router.get('/my-courses', verifyRole('teacher'), async (req, res) => {
 });
 
 // 📌 Tạo course mới (chỉ teacher hoặc admin)
-router.post('/', verifyRole('teacher'), async (req, res) => {
+router.post('/add', verifyRole('teacher'), async (req, res) => {
     try {
         const { name, courseTypeId, description, image, price, link, status } = req.body;
         const creatorId = req.user.id;
@@ -45,7 +45,7 @@ router.post('/', verifyRole('teacher'), async (req, res) => {
 });
 
 // 📌 Cập nhật course (chỉ teacher hoặc admin và đúng chủ sở hữu)
-router.put('/:id', verifyRole('teacher'), async (req, res) => {
+router.put('/:id/update', verifyRole('teacher'), async (req, res) => {
     try {
         const { name, courseTypeId, description, image, price, link, status } = req.body;
         const courseId = req.params.id;
@@ -82,7 +82,7 @@ router.put('/:id', verifyRole('teacher'), async (req, res) => {
 });
 
 // 📌 Xóa course (chỉ teacher hoặc admin và đúng chủ sở hữu)
-router.delete('/:id', verifyRole('teacher'), async (req, res) => {
+router.delete('/:id/delete', verifyRole('teacher'), async (req, res) => {
     try {
         const conn = db.promise();
         // Kiểm tra quyền sở hữu
@@ -114,7 +114,7 @@ router.get('/', async (req, res) => {
         res.status(500).json({ status: false, message: 'Lấy danh sách thất bại', details: error.message });
     }
 });
-router.get('/:id', async (req, res) => {
+router.get('/:id/detail', async (req, res) => {
     try {
         const conn = db.promise();
         const [rows] = await conn.query(`SELECT * FROM courses WHERE id = ?`, [req.params.id]);

@@ -7,7 +7,7 @@ const API_URL = import.meta.env.VITE_API_URL;
  * Không cần truyền dữ liệu đầu vào
  */
 export const fetchAllCourses = async () => {
-    const response = await apiClient.get(`${API_URL}/api/courses`);
+    const response = await apiClient.get(`${API_URL}/api/courses/`);
     return response.data;
 };
 

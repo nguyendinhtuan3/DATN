@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import useAuthStore from '../../store/authStore';
 import { minigame } from '../../assets';
 import AddCourseModal from './AddCourseModal';
-import { fetchMyCourses, deleteCourse, updateCourse } from '../../api/courseService';
+import { fetchMyCourses, deleteCourse } from '../../api/courseService';
 
 const CourseManagementPage = () => {
     const { user } = useAuthStore();
@@ -10,12 +10,12 @@ const CourseManagementPage = () => {
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [editingCourse, setEditingCourse] = useState(null); // Lưu khóa học đang sửa
+    const [editingCourse, setEditingCourse] = useState(null);
 
     const fetchApi = async () => {
         try {
             setLoading(true);
-            const response = await fetchMyCourses();
+            const response = await fetchMyCourses(); // ✅ Lấy tất cả khóa học
             if (response.status && Array.isArray(response.data)) {
                 setCourses(response.data);
             } else {
@@ -32,14 +32,13 @@ const CourseManagementPage = () => {
         fetchApi();
     }, []);
 
-    // Xử lý xóa khóa học
     const handleDelete = async (id) => {
         if (!window.confirm('Bạn có chắc muốn xóa khóa học này không?')) return;
         try {
             setLoading(true);
             const res = await deleteCourse(id);
             if (res.status) {
-                setCourses(courses.filter((course) => course.id !== id));
+                setCourses((prev) => prev.filter((course) => course._id !== id));
             } else {
                 alert('Xóa khóa học thất bại: ' + res.message);
             }
@@ -50,20 +49,20 @@ const CourseManagementPage = () => {
         }
     };
 
-    // Xử lý mở modal sửa
     const handleEdit = (course) => {
         setEditingCourse(course);
         setIsModalOpen(true);
     };
 
-    // Khi modal đóng hoặc lưu thành công
     const handleModalClose = (updatedCourse) => {
         setIsModalOpen(false);
         setEditingCourse(null);
-
-        // Nếu có dữ liệu khóa học mới hoặc sửa đổi trả về, cập nhật danh sách
         if (updatedCourse) {
-            setCourses((prev) => prev.map((course) => (course.id === updatedCourse.id ? updatedCourse : course)));
+            setCourses((prev) =>
+                prev.map((course) =>
+                    course._id === updatedCourse._id ? updatedCourse : course
+                )
+            );
         }
     };
 
@@ -106,11 +105,11 @@ const CourseManagementPage = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                     {courses.map((course) => (
-                        <div key={course.id} className="bg-white shadow-md rounded-md p-4 flex flex-col">
+                        <div key={course._id} className="bg-white shadow-md rounded-md p-4 flex flex-col">
                             <div className="h-24 bg-gray-100 rounded mb-4" />
                             <div className="text-lg font-semibold mb-1">📖 {course.title}</div>
                             <div className="text-sm mb-2">{course.description}</div>
-                            <div className="text-xs text-gray-500 mb-4">Course Type : {course.courseTypeName}</div>
+                            <div className="text-xs text-gray-500 mb-4">Course Type: {course.courseTypeName}</div>
 
                             <div className="flex gap-2 mt-auto">
                                 <button
@@ -120,7 +119,7 @@ const CourseManagementPage = () => {
                                     Edit
                                 </button>
                                 <button
-                                    onClick={() => handleDelete(course.id)}
+                                    onClick={() => handleDelete(course._id)}
                                     className="bg-red-100 text-red-800 px-4 py-1 rounded-md text-sm hover:bg-red-200"
                                 >
                                     Delete
@@ -135,7 +134,7 @@ const CourseManagementPage = () => {
             <AddCourseModal
                 isOpen={isModalOpen}
                 onClose={handleModalClose}
-                editingCourse={editingCourse} // Truyền dữ liệu khóa học đang sửa
+                editingCourse={editingCourse}
             />
         </div>
     );
