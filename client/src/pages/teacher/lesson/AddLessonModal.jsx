@@ -1,67 +1,65 @@
 import { useEffect, useState } from 'react';
-import { fetchCourseTypes } from '../../../api/courseTypeService';
-import ImageCropper from '../../../components/ImageCropper';
-import { apiUploadImage } from '../../../services/uploadPicture.service';
-import { showNotification } from '../../../components/showNotification';
-import InputEditor from '../../../components/InputEditor';
-import { createCourse, updateCourse } from '../../../api/courseService';
 import Overlay from '../../../components/common/Overlay';
+import { showNotification } from '../../../components/showNotification';
+import { addLesson, updateLesson } from '../../../api/lessonService';
+import { fetchMyCourses } from '../../../api/courseService';
 
-function AddLessonModal({ isOpen, onClose, editingCourse }) {
-    const [courseTypes, setCourseTypes] = useState([]);
-    const [loadingTypes, setLoadingTypes] = useState(false);
+function AddLessonModal({ isOpen, onClose, editingLesson }) {
+    const [courses, setCourses] = useState([]);
+    const [loadingCourses, setLoadingCourses] = useState(false);
     const [loadingSubmit, setLoadingSubmit] = useState(false);
     const [formError, setFormError] = useState('');
-    const [isLoadingImage, setIsLoadingImage] = useState(false);
 
     const [formData, setFormData] = useState({
         title: '',
-        courseTypeId: '',
-        description: '',
-        image: '',
-        price: '',
-        link: '',
+        course_id: '',
+        content: '',
     });
 
     useEffect(() => {
         if (!isOpen) return;
 
-        // Initialize formData with editingCourse data if provided
-        if (editingCourse) {
+        // Initialize formData
+        if (editingLesson) {
             setFormData({
-                title: editingCourse.title || '',
-                courseTypeId: editingCourse.courseTypeId || '',
-                description: editingCourse.description || '',
-                image: editingCourse.image || '',
-                price: editingCourse.price || '',
-                link: editingCourse.link || '',
+                title: editingLesson.title || '',
+                course_id: editingLesson.course_id || '',
+                content: editingLesson.content || '',
             });
         } else {
             setFormData({
                 title: '',
-                courseTypeId: '',
-                description: '',
-                image: '',
-                price: '',
-                link: '',
+                course_id: '',
+                content: '',
             });
         }
 
-        const fetchTypes = async () => {
-            setLoadingTypes(true);
+        let isMounted = true;
+        const fetchCourseList = async () => {
+            setLoadingCourses(true);
             try {
-                const response = await fetchCourseTypes();
-                setCourseTypes(response?.data || []);
+                const response = await fetchMyCourses();
+                if (isMounted) {
+                    setCourses(response?.data || []);
+                }
             } catch (error) {
-                console.error('Lỗi khi lấy loại khóa học:', error);
-                showNotification('Không thể tải danh sách loại khóa học.', false);
+                if (isMounted) {
+                    console.error('Lỗi khi lấy danh sách khóa học:', error);
+                    showNotification('Không thể tải danh sách khóa học.', false);
+                }
             } finally {
-                setLoadingTypes(false);
+                if (isMounted) {
+                    setLoadingCourses(false);
+                }
             }
         };
 
-        fetchTypes();
-    }, [isOpen, editingCourse]);
+        fetchCourseList();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [isOpen, editingLesson]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -73,25 +71,19 @@ function AddLessonModal({ isOpen, onClose, editingCourse }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const { title, courseTypeId, price, description, link } = formData;
+        const { title, course_id } = formData;
 
         // Validate required fields
-        if (!title || !courseTypeId || !price || !description || !link) {
-            showNotification('Vui lòng điền đầy đủ tất cả các trường bắt buộc.', false);
+        if (!title || !course_id) {
+            showNotification('Vui lòng điền tiêu đề và chọn khóa học.', false);
+            setFormError('Tiêu đề và khóa học là bắt buộc.');
             return;
         }
 
-        // Validate price
-        if (parseFloat(price) < 0) {
-            showNotification('Giá phải là số không âm.', false);
-            return;
-        }
-
-        // Validate link (basic URL check)
-        try {
-            new URL(link);
-        } catch {
-            showNotification('Liên kết phải là một URL hợp lệ.', false);
+        // Validate title length (STRING(255))
+        if (title.length > 255) {
+            showNotification('Tiêu đề không được vượt quá 255 ký tự.', false);
+            setFormError('Tiêu đề quá dài.');
             return;
         }
 
@@ -100,62 +92,47 @@ function AddLessonModal({ isOpen, onClose, editingCourse }) {
 
         try {
             let res;
-            if (editingCourse) {
-                // Update existing course
-                res = await updateCourse(editingCourse.id, formData);
-                showNotification('Cập nhật thành công', true);
+            if (editingLesson) {
+                res = await updateLesson(editingLesson.id, formData);
+                showNotification('Cập nhật bài học thành công', true);
             } else {
-                // Create new course
-                res = await createCourse(formData);
-                showNotification('Thêm khóa học thành công', true);
+                res = await addLesson(formData);
+           
+                showNotification('Thêm bài học thành công', true);
             }
-
+            console.log("dsds",res)
             if (res.status) {
-                // Pass the new/updated course back to parent
                 onClose(res.data);
                 setFormData({
                     title: '',
-                    courseTypeId: '',
-                    price: '',
-                    description: '',
-                    link: '',
-                    image: '',
+                    course_id: '',
+                    content: '',
                 });
             }
         } catch (err) {
-            setFormError(err.message || 'Đã xảy ra lỗi khi lưu khóa học.');
-            showNotification('Không thể lưu khóa học. Vui lòng thử lại.', false);
+            const errorMessage = err.message || 'Đã xảy ra lỗi khi lưu bài học.';
+            setFormError(errorMessage);
+            showNotification('Không thể lưu bài học. Vui lòng thử lại.', false);
         } finally {
             setLoadingSubmit(false);
         }
     };
 
-    const handleImageUpload = async (image) => {
-        setIsLoadingImage(true);
-        try {
-            const formData = new FormData();
-            formData.append('file', image);
-            formData.append('upload_preset', import.meta.env.VITE_REACT_UPLOAD_PRESET);
-            const response = await apiUploadImage(formData);
-            setFormData((prev) => ({
-                ...prev,
-                image: response.url,
-            }));
-        } catch (error) {
-            console.error('Lỗi khi tải ảnh:', error);
-            showNotification('Không thể tải ảnh lên. Vui lòng thử lại.', false);
-        } finally {
-            setIsLoadingImage(false);
+    const handleOverlayClick = (e) => {
+        if (e.target === e.currentTarget) {
+            onClose(null);
         }
     };
 
     if (!isOpen) return null;
 
     return (
-        <Overlay onClick={() => onClose(null)} className={'z-[1000]'}>
-            <div className="bg-white  w-1/2 max-h-[90vh] overflow-y-auto rounded-lg shadow-lg p-6">
+        <Overlay onClick={handleOverlayClick} className="z-[1000]">
+            <div className="bg-white w-1/2 max-h-[90vh] overflow-y-auto rounded-lg shadow-lg p-6">
                 <div className="flex justify-between items-center mb-4 border-b pb-2">
-                    <h3 className="text-lg font-semibold">{editingCourse ? '✏️ Sửa Khóa Học' : '➕ Thêm Khóa Học'}</h3>
+                    <h3 className="text-lg font-semibold">
+                        {editingLesson ? '✏️ Sửa Bài Học' : '➕ Thêm Bài Học'}
+                    </h3>
                     <button
                         className="text-gray-500 hover:text-red-500 text-xl"
                         onClick={() => onClose(null)}
@@ -166,95 +143,75 @@ function AddLessonModal({ isOpen, onClose, editingCourse }) {
                 </div>
 
                 <div className="space-y-4">
-                    {formError && <p className="text-red-500 text-sm">{formError}</p>}
-                    <div>
-                        <label className="block text-sm font-medium mb-2">Hình ảnh khóa học</label>
-                        <ImageCropper
-                            width={460}
-                            height={260}
-                            label="Thêm hình ảnh"
-                            idName="image"
-                            onCropComplete={handleImageUpload}
-                        />
-                        {formData.image && (
-                            <img src={formData.image} alt="Banner" className="mt-2 w-full rounded shadow" />
-                        )}
-                    </div>
+                    {formError && (
+                        <p className="text-red-500 text-sm bg-red-50 p-2 rounded">{formError}</p>
+                    )}
 
                     <div>
-                        <label className="block text-sm font-medium">Tên khóa học</label>
+                        <label className="block text-sm font-medium mb-1">Tiêu đề bài học</label>
                         <input
                             name="title"
                             value={formData.title}
                             onChange={handleChange}
-                            className="w-full border rounded px-3 py-2"
+                            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
+                            maxLength={255}
+                            placeholder="Nhập tiêu đề bài học"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium">Loại khóa học</label>
+                        <label className="block text-sm font-medium mb-1">Khóa học</label>
                         <select
-                            name="courseTypeId"
-                            value={formData.courseTypeId}
+                            name="course_id"
+                            value={formData.course_id}
                             onChange={handleChange}
-                            className="w-full border rounded px-3 py-2"
+                            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
-                            disabled={loadingTypes}
+                            disabled={loadingCourses}
                         >
-                            <option value="">-- Chọn loại khóa học --</option>
-                            {courseTypes.map((type) => (
-                                <option key={type.id} value={type.id}>
-                                    {type.name}
+                            <option value="">-- Chọn khóa học --</option>
+                            {courses.map((course) => (
+                                <option key={course.id} value={course.id}>
+                                    {course.title}
                                 </option>
                             ))}
                         </select>
+                        {loadingCourses && (
+                            <div className="mt-2 flex items-center">
+                                <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-blue-500 mr-2"></div>
+                                <span className="text-sm text-gray-500">Đang tải khóa học...</span>
+                            </div>
+                        )}
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium">Giá</label>
-                        <input
-                            name="price"
-                            type="number"
-                            min="0"
-                            value={formData.price}
-                            onChange={handleChange}
-                            className="w-full border rounded px-3 py-2"
-                            required
-                        />
-                    </div>
-                    <InputEditor label="Mô Tả" value={formData.description} setValue={setFormData} />
-
-                    {/* <div>
-                        <label className="block text-sm font-medium">Mô tả</label>
+                        <label className="block text-sm font-medium mb-1">Nội dung</label>
                         <textarea
-                            name="description"
-                            rows="3"
-                            value={formData.description}
+                            name="content"
+                            rows="5"
+                            value={formData.content}
                             onChange={handleChange}
-                            className="w-full border rounded px-3 py-2"
-                            required
-                        />
-                    </div> */}
-
-                    <div>
-                        <label className="block text-sm font-medium">Liên kết</label>
-                        <textarea
-                            name="link"
-                            rows="2"
-                            value={formData.link}
-                            onChange={handleChange}
-                            className="w-full border rounded px-3 py-2"
-                            required
+                            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Nhập nội dung bài học"
                         />
                     </div>
 
                     <button
-                        className="w-full bg-blue-500 text-white font-semibold py-2 rounded-md hover:bg-blue-600 disabled:opacity-50"
-                        disabled={loadingSubmit || isLoadingImage}
+                        className="w-full bg-blue-500 text-white font-semibold py-2 rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                        disabled={loadingSubmit}
                         onClick={handleSubmit}
                     >
-                        {loadingSubmit ? 'Đang lưu...' : editingCourse ? 'Cập nhật khóa học' : 'Thêm khóa học'}
+                        {loadingSubmit ? (
+                            <>
+                                <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-white mr-2"></div>
+                                Đang lưu...
+                            </>
+                        ) : editingLesson ? (
+                            'Cập nhật bài học'
+                        ) : (
+                            'Thêm bài học'
+                        )}
                     </button>
                 </div>
             </div>

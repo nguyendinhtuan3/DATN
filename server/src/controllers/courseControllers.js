@@ -26,7 +26,7 @@ router.get('/my-courses', verifyRole('teacher'), async (req, res) => {
 });
 
 // 📌 Create new course (teacher only)
-router.post('/', verifyRole('teacher'), async (req, res) => {
+router.post('/add', verifyRole('teacher'), async (req, res) => {
     try {
         const { title, courseTypeId, description, image, price, link } = req.body;
         const creatorId = req.user.id;
