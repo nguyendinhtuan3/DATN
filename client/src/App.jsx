@@ -10,9 +10,9 @@ import ToastComponent from './components/toastComponent';
 import ResetPassword from './pages/auth/ResetPassword';
 import ProfilePage from './pages/ProfilePage';
 import useAuthStore from './store/authStore';
-import CourseManagement from './pages/admin/CourseManagement';
-import CourseManagementPage from './pages/teacher/courseManagementPage';
 import CourseListingPage from './pages/CourseListingPage';
+import CourseManagementPage from './pages/teacher/cource/courseManagementPage';
+import LessonManagementPage from './pages/teacher/lesson/LessonManagementPage';
 
 const App = () => {
     // const [user, setUser] = useState(null);
@@ -128,7 +128,10 @@ const App = () => {
                     {user.role === 'admin' ? (
                         <></>
                     ) : user.role === 'teacher' ? (
-                        <Route path="/course-management" element={<CourseManagementPage />} />
+                        <>
+                            <Route path="/course-management" element={<CourseManagementPage />} />
+                            <Route path="/lesson-management" element={<LessonManagementPage />} />
+                        </>
                     ) : (
                         <></>
                     )}

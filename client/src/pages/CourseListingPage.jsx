@@ -4,6 +4,7 @@ import { fetchCourseTypes } from '../api/courseTypeService';
 import { fetchAllCourses } from '../api/courseService';
 import { showNotification } from '../components/showNotification';
 import parse from 'html-react-parser';
+import { formatMoney } from '../utils/formatMoney';
 const CourseListingPage = () => {
     const [courseTypes, setCourseTypes] = useState([]);
     const [courses, setCourses] = useState([]);
@@ -68,7 +69,7 @@ const CourseListingPage = () => {
                         {filteredCourses.map((course) => (
                             <div key={course.id} className="bg-white shadow-md rounded-md overflow-hidden w-60">
                                 {course.image ? (
-                                    <img src={course.image} alt={course.title} className="object-cover rounded" />
+                                    <img src={course.image} alt={course.title} className="object-contain rounded" />
                                 ) : (
                                     <div className="bg-gray-100 rounded mb-4" />
                                 )}
@@ -128,12 +129,12 @@ const CourseListingPage = () => {
                                         <span className="mr-2">🎯</span> Target: {selectedCourse.targetScore || 'N/A'}
                                     </p>
                                     <p className="flex items-center mb-2">
-                                        <span className="mr-2">👩‍🏫</span> Instructor:{' '}
+                                        <span className="mr-2">👩‍🏫</span> Instructor:
                                         {selectedCourse.instructor || 'N/A'}
                                     </p>
                                     <p className="flex items-center mb-2">
-                                        <span className="mr-2">💰</span> Course price: {selectedCourse.price || 'N/A'}{' '}
-                                        VND
+                                        <span className="mr-2">💰</span> Course price:
+                                        {formatMoney(selectedCourse.price) || 'N/A'} VND
                                     </p>
                                 </div>
                                 <button className="w-full bg-green-200 text-green-800 px-4 py-2 rounded-md hover:bg-green-300 transition-colors mb-4">
