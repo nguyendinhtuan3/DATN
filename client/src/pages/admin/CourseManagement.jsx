@@ -8,7 +8,8 @@ const CourseManagement = () => {
 
     useEffect(() => {
         console.log('Đang gọi API /api/courses...');
-        axios.get('http://localhost:3000/api/courses')
+        axios
+            .get('http://localhost:3000/api/courses')
             .then((response) => {
                 console.log('Dữ liệu khóa học:', response.data);
                 setCourses(response.data);

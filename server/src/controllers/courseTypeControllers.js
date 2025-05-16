@@ -1,0 +1,89 @@
+const express = require('express');
+const db = require('../../db'); // kết nối cơ sở dữ liệu MySQL
+const { verifyRole } = require('../middlewares/auth'); // middleware phân quyền
+
+const router = express.Router();
+
+// 📌 Lấy tất cả loại khóa học
+router.get('/', async (req, res) => {
+    try {
+        const conn = db.promise();
+        const [rows] = await conn.query(`SELECT * FROM course_types`);
+        res.status(200).json({ status: true, data: rows });
+    } catch (error) {
+        res.status(500).json({ status: false, message: 'Lỗi máy chủ', details: error.message });
+    }
+});
+
+// 📌 Lấy loại khóa học theo ID
+router.get('/:id', async (req, res) => {
+    try {
+        const conn = db.promise();
+        const [rows] = await conn.query(`SELECT * FROM course_types WHERE id = ?`, [req.params.id]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({ status: false, message: 'Không tìm thấy loại khóa học' });
+        }
+
+        res.status(200).json({ status: true, data: rows[0] });
+    } catch (error) {
+        res.status(500).json({ status: false, message: 'Lỗi máy chủ', details: error.message });
+    }
+});
+
+// 📌 Tạo loại khóa học mới (chỉ admin)
+router.post('/', verifyRole('admin'), async (req, res) => {
+    try {
+        const { name } = req.body;
+        if (!name) return res.status(400).json({ status: false, message: 'Tên là bắt buộc' });
+
+        const conn = db.promise();
+        const [result] = await conn.query(`INSERT INTO course_types (name) VALUES (?)`, [name]);
+
+        const [newRows] = await conn.query(`SELECT * FROM course_types WHERE id = ?`, [result.insertId]);
+
+        res.status(201).json({ status: true, data: newRows[0] });
+    } catch (error) {
+        res.status(500).json({ status: false, message: 'Tạo loại khóa học thất bại', details: error.message });
+    }
+});
+
+// 📌 Cập nhật loại khóa học (chỉ admin)
+router.put('/:id', verifyRole('admin'), async (req, res) => {
+    try {
+        const { name } = req.body;
+
+        const conn = db.promise();
+        const [rows] = await conn.query(`SELECT * FROM course_types WHERE id = ?`, [req.params.id]);
+        if (rows.length === 0) {
+            return res.status(404).json({ status: false, message: 'Không tìm thấy loại khóa học' });
+        }
+
+        await conn.query(`UPDATE course_types SET name = ? WHERE id = ?`, [name || rows[0].name, req.params.id]);
+
+        const [updated] = await conn.query(`SELECT * FROM course_types WHERE id = ?`, [req.params.id]);
+        res.status(200).json({ status: true, data: updated[0] });
+    } catch (error) {
+        res.status(500).json({ status: false, message: 'Cập nhật thất bại', details: error.message });
+    }
+});
+
+// 📌 Xóa loại khóa học (chỉ admin)
+router.delete('/:id', verifyRole('admin'), async (req, res) => {
+    try {
+        const conn = db.promise();
+        const [rows] = await conn.query(`SELECT * FROM course_types WHERE id = ?`, [req.params.id]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({ status: false, message: 'Không tìm thấy loại khóa học' });
+        }
+
+        await conn.query(`DELETE FROM course_types WHERE id = ?`, [req.params.id]);
+
+        res.status(200).json({ status: true, message: 'Xóa thành công' });
+    } catch (error) {
+        res.status(500).json({ status: false, message: 'Xóa thất bại', details: error.message });
+    }
+});
+
+module.exports = router;

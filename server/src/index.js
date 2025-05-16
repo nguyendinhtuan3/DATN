@@ -1,18 +1,22 @@
-const express = require("express");
-const cors = require("cors");
-const authControllers = require("./controllers/auth");
-const connectDatabase = require("./config/connectDatabase");
+const express = require('express');
+const cors = require('cors');
+const authControllers = require('./controllers/authControllers');
+const courseControllers = require('./controllers/courseControllers');
+const courseTypeControllers = require('./controllers/courseTypeControllers');
+const connectDatabase = require('./config/connectDatabase');
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 connectDatabase();
-app.use("/api", authControllers);
+app.use('/api', authControllers);
+app.use('/api/courses', courseControllers);
+app.use('/api/course-types', courseTypeControllers);
 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
 
 // const { createHandler } = require("graphql-http/lib/use/express");
