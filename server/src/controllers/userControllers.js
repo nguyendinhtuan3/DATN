@@ -7,7 +7,7 @@ const router = express.Router();
 const SALT_ROUNDS = 10;
 
 // 📌 Lấy danh sách người dùng (tìm kiếm & phân trang)
-router.get("/all", verifyRole("teacher"), async (req, res) => {
+router.get("/all", verifyRole("admin"), async (req, res) => {
   const { search = "", page = 1, limit = 10 } = req.query;
   const offset = (page - 1) * limit;
 
