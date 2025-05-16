@@ -46,7 +46,7 @@ export const fetchMyCourses = async () => {
  * @param {object} courseData - Dữ liệu khóa học
  */
 export const createCourse = async (courseData) => {
-    const response = await authClient.post(`${API_URL}/api/courses`, courseData);
+    const response = await authClient.post(`${API_URL}/api/courses/add`, courseData);
     return response.data;
 };
 
