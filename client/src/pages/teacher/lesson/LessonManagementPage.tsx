@@ -21,11 +21,11 @@ const LessonManagementPage = () => {
             if (response.status && Array.isArray(response.data)) {
                 setCourses(response.data);
             } else {
-                setError('Không có dữ liệu khóa học');
+                setError('Không có dữ liệu bài học');
             }
         } catch (err) {
             setError(err.message || 'Đã xảy ra lỗi khi tải dữ liệu');
-            showNotification('Không thể tải dữ liệu khóa học.', false);
+            showNotification('Không thể tải dữ liệu bài học.', false);
         } finally {
             setLoading(false);
         }
@@ -36,7 +36,7 @@ const LessonManagementPage = () => {
     }, []);
 
     const handleDelete = async (id) => {
-        if (!window.confirm('Bạn có chắc muốn xóa khóa học này không?')) return;
+        if (!window.confirm('Bạn có chắc muốn xóa bài học này không?')) return;
         try {
             setLoading(true);
             const res = await deleteCourse(id);
@@ -45,7 +45,7 @@ const LessonManagementPage = () => {
                 setCourses((prev) => prev.filter((course) => course._id !== id));
             }
         } catch (error) {
-            showNotification('Lỗi khi xóa khóa học: ' + error.message, false);
+            showNotification('Lỗi khi xóa bài học: ' + error.message, false);
         } finally {
             setLoading(false);
         }
@@ -114,7 +114,7 @@ const LessonManagementPage = () => {
 
             <div className="flex-1">
                 <div className="bg-[#cce6f6] p-4 rounded-md flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-semibold">Course Management</h2>
+                    <h2 className="text-xl font-semibold">Lesson Management</h2>
                     <button
                         onClick={() => {
                             setEditingCourse(null);
