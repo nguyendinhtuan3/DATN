@@ -5,6 +5,7 @@ const courseControllers = require('./controllers/courseControllers');
 const courseTypeControllers = require('./controllers/courseTypeControllers');
 const userControllers = require('./controllers/userControllers');
 const roleControllers = require('./controllers/roleControllers');
+const typecourseControllers = require('./controllers/typecourseControllers');
 const connectDatabase = require('./config/connectDatabase');
 const app = express();
 
@@ -16,10 +17,11 @@ app.use('/api/courses', courseControllers);
 app.use('/api/course-types', courseTypeControllers);
 app.use('/api/users', userControllers );
 app.use('/api/roles', roleControllers);
+app.use('/api/typecourse', typecourseControllers);
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-    console.log(`Server running on port 1 ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
 
 // const { createHandler } = require("graphql-http/lib/use/express");

@@ -4,7 +4,6 @@ import { Input, Button, Avatar } from 'antd';
 import { SearchOutlined, TrophyOutlined, UserOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import Navbar from '../components/Navbar';
 import { AvatarLinhvat, garden, minigame, tower } from '../assets';
-import { fetchAllCourses } from '../api/courseService';
 import useAuthStore from '../store/authStore';
 
 const Home = () => {
@@ -17,7 +16,6 @@ const Home = () => {
         const fetchCourses = async () => {
             try {
                 setLoading(true);
-                const res = await fetchAllCourses();
                 if (res.status && Array.isArray(res.data)) {
                     setCourses(res.data);
                 } else {
@@ -58,33 +56,6 @@ const Home = () => {
                         </p>
                     </div>
                     <img src={AvatarLinhvat} alt="Mascot" className="w-full h-auto shadow-xl" />
-                </div>
-
-                {/* Courses */}
-                <div className="mb-16">
-                    <h2 className="text-2xl font-bold text-teal-700 mb-6 text-center">Available Courses</h2>
-                    {loading && <p className="text-center text-gray-500">Đang tải khóa học...</p>}
-                    {error && <p className="text-center text-red-500">{error}</p>}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                        {courses.map((course) => (
-                            <div
-                                key={course._id}
-                                className="bg-white rounded-xl shadow-md p-4 flex flex-col justify-between hover:shadow-lg transition"
-                            >
-                                <div>
-                                    <h3 className="text-lg font-semibold mb-2">📘 {course.title}</h3>
-                                    <p className="text-sm text-gray-600 mb-4">{course.description}</p>
-                                    <span className="text-xs text-teal-600">Type: {course.courseTypeName}</span>
-                                </div>
-                                <Link
-                                    to={`/courses/${course._id}`}
-                                    className="mt-4 inline-block text-teal-600 text-sm font-semibold hover:underline"
-                                >
-                                    View Details →
-                                </Link>
-                            </div>
-                        ))}
-                    </div>
                 </div>
 
                 {/* Start Button */}
