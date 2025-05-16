@@ -2,6 +2,16 @@ import { apiClient, authClient } from '../config/httpRequest';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+// Hàm gọi API xác nhận thanh toán
+export const confirmPayment = async (courseId) => {
+    try {
+        const response = await authClient.post(`${API_URL}/api/courses/confirm-payment`, { courseId });
+        return response.data;
+    } catch (error) {
+        console.error('Lỗi khi xác nhận thanh toán:', error);
+        throw error.response?.data || { status: false, message: 'Đã xảy ra lỗi khi gọi API' };
+    }
+};
 /**
  * 📌 Lấy danh sách tất cả khóa học
  * Không cần truyền dữ liệu đầu vào

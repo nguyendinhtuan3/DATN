@@ -1,6 +1,7 @@
-import { apiClient } from '../config/httpRequest';
+import { apiClient, authClient } from '../config/httpRequest';
 
 const API_URL = import.meta.env.VITE_API_URL;
+
 /**
  * 📌 Lấy danh sách tất cả loại khóa học
  * Không cần truyền dữ liệu đầu vào
