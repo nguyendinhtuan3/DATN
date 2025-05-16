@@ -4,7 +4,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import { Menu, MenuItem, Button } from '@mui/material';
 import useAuthStore from '../store/authStore';
 import { showNotification } from '../components/showNotification';
-import { Logo } from '../assets';
+import { Logo, minigame } from '../assets';
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -57,12 +57,10 @@ const Navbar = () => {
 
             {isUserLoggedIn ? (
                 <div>
-                    <Button
-                        onClick={handleClick}
-                        style={{ color: 'white', textTransform: 'none' }}
-                        startIcon={<PersonIcon />}
-                    >
-                        {user.username}
+                    <Button onClick={handleClick} style={{ color: 'white', textTransform: 'none', display: 'flex' }}>
+                        <img src={user.avatar || minigame} className="w-8 h-8 rounded-full  " />
+                        {}
+                        <span className="ml-2"> {user.username}</span>
                     </Button>
                     <Menu
                         anchorEl={anchorEl}
