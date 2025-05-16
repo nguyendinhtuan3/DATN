@@ -19,15 +19,15 @@ Lesson.init(
             primaryKey: true,
             allowNull: false,
         },
-        name: {
+        title: {
             type: DataTypes.STRING(255),
             allowNull: false,
         },
-        description: {
+        content: {
             type: DataTypes.TEXT,
             allowNull: true,
         },
-        courseId: {
+        course_id: {
             type: DataTypes.UUID,
             allowNull: false,
             references: {
@@ -35,14 +35,10 @@ Lesson.init(
                 key: 'id',
             },
         },
-        masteryRoadId: {
-            type: DataTypes.UUID,
-            allowNull: false,
-            references: {
-                model: 'mastery_roads',
-                key: 'id',
-            },
-        },
+        link: {
+      type: DataTypes.STRING(500),
+      allowNull: true, // hoặc false nếu bắt buộc có link
+    },
     },
     {
         sequelize,

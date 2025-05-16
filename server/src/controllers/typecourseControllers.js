@@ -4,16 +4,17 @@ const { verifyRole } = require("../middlewares/auth");
 
 const router = express.Router();
 
-// 📌 Lấy danh sách loại khóa học (tìm kiếm & phân trang)
-router.get("/all", verifyRole("admin"), async (req, res) => {
+// 📌 Lấy danh sách bài học (có tìm kiếm & phân trang)
+router.get("/all" , async (req, res) => {
   const { search = "", page = 1, limit = 10 } = req.query;
   const offset = (page - 1) * limit;
 
   try {
     const conn = db.promise();
 
-    const [courseTypes] = await conn.query(
-      `SELECT id, name, createdAt, updatedAt FROM course_types 
+    const [lessons] = await conn.query(
+      `SELECT id, name, description, courseId, masteryRoadId, createdAt, updatedAt 
+       FROM lessons 
        WHERE name LIKE ?
        ORDER BY createdAt DESC
        LIMIT ? OFFSET ?`,
@@ -21,111 +22,96 @@ router.get("/all", verifyRole("admin"), async (req, res) => {
     );
 
     const [[{ total }]] = await conn.query(
-      `SELECT COUNT(*) AS total FROM course_types WHERE name LIKE ?`,
+      `SELECT COUNT(*) AS total FROM lessons WHERE name LIKE ?`,
       [`%${search}%`]
     );
 
-    return res.json({ status: true, courseTypes, total });
+    return res.json({ status: true, lessons, total });
   } catch (err) {
-    console.error("Get course types error:", err);
+    console.error("Get lessons error:", err);
     return res.status(500).json({ status: false, message: "Lỗi máy chủ" });
   }
 });
 
-// 📌 Lấy chi tiết loại khóa học theo ID
+// 📌 Lấy chi tiết bài học
 router.get("/:id/detail", verifyRole("admin"), async (req, res) => {
   const { id } = req.params;
 
   try {
     const conn = db.promise();
     const [rows] = await conn.query(
-      "SELECT id, name, createdAt, updatedAt FROM course_types WHERE id = ?",
+      `SELECT id, name, description, courseId, masteryRoadId, createdAt, updatedAt 
+       FROM lessons WHERE id = ?`,
       [id]
     );
 
     if (rows.length === 0) {
-      return res.status(404).json({ status: false, message: "Không tìm thấy loại khóa học" });
+      return res.status(404).json({ status: false, message: "Không tìm thấy bài học" });
     }
 
-    return res.json({ status: true, courseType: rows[0] });
+    return res.json({ status: true, lesson: rows[0] });
   } catch (err) {
-    console.error("Get course type detail error:", err);
+    console.error("Get lesson detail error:", err);
     return res.status(500).json({ status: false, message: "Lỗi máy chủ" });
   }
 });
 
-// 📌 Thêm loại khóa học
+// 📌 Thêm bài học
 router.post("/add", verifyRole("admin"), async (req, res) => {
-  const { name } = req.body;
+  const { name, description, courseId, masteryRoadId } = req.body;
 
   try {
     const conn = db.promise();
 
-    // Kiểm tra trùng tên
-    const [existing] = await conn.query(
-      "SELECT id FROM course_types WHERE name = ?",
-      [name]
-    );
-    if (existing.length > 0) {
-      return res.json({ status: false, message: "Tên loại khóa học đã tồn tại" });
-    }
-
     const [result] = await conn.query(
-      "INSERT INTO course_types (id, name, createdAt, updatedAt) VALUES (UUID(), ?, NOW(), NOW())",
-      [name]
+      `INSERT INTO lessons (id, name, description, courseId, masteryRoadId, createdAt, updatedAt)
+       VALUES (UUID(), ?, ?, ?, ?, NOW(), NOW())`,
+      [name, description, courseId, masteryRoadId]
     );
 
     return res.status(201).json({
       status: true,
-      message: "Thêm loại khóa học thành công",
-      courseType: { id: result.insertId, name },
+      message: "Thêm bài học thành công",
     });
   } catch (err) {
-    console.error("Add course type error:", err);
+    console.error("Add lesson error:", err);
     return res.status(500).json({ status: false, message: "Lỗi máy chủ" });
   }
 });
 
-// 📌 Cập nhật loại khóa học
+// 📌 Cập nhật bài học
 router.put("/:id/update", verifyRole("admin"), async (req, res) => {
   const { id } = req.params;
-  const { name } = req.body;
+  const { name, description, courseId, masteryRoadId } = req.body;
 
   try {
     const conn = db.promise();
 
-    // Kiểm tra trùng tên
-    const [existing] = await conn.query(
-      "SELECT id FROM course_types WHERE name = ? AND id != ?",
-      [name, id]
-    );
-    if (existing.length > 0) {
-      return res.json({ status: false, message: "Tên loại khóa học đã tồn tại" });
-    }
-
     await conn.query(
-      "UPDATE course_types SET name = ?, updatedAt = NOW() WHERE id = ?",
-      [name, id]
+      `UPDATE lessons 
+       SET name = ?, description = ?, courseId = ?, masteryRoadId = ?, updatedAt = NOW()
+       WHERE id = ?`,
+      [name, description, courseId, masteryRoadId, id]
     );
 
-    return res.json({ status: true, message: "Cập nhật thành công" });
+    return res.json({ status: true, message: "Cập nhật bài học thành công" });
   } catch (err) {
-    console.error("Update course type error:", err);
+    console.error("Update lesson error:", err);
     return res.status(500).json({ status: false, message: "Lỗi máy chủ" });
   }
 });
 
-// 📌 Xoá loại khóa học
+// 📌 Xóa bài học
 router.delete("/:id/delete", verifyRole("admin"), async (req, res) => {
   const { id } = req.params;
 
   try {
     const conn = db.promise();
-    await conn.query("DELETE FROM course_types WHERE id = ?", [id]);
+    await conn.query(`DELETE FROM lessons WHERE id = ?`, [id]);
 
-    return res.json({ status: true, message: "Xóa loại khóa học thành công" });
+    return res.json({ status: true, message: "Xóa bài học thành công" });
   } catch (err) {
-    console.error("Delete course type error:", err);
+    console.error("Delete lesson error:", err);
     return res.status(500).json({ status: false, message: "Lỗi máy chủ" });
   }
 });
