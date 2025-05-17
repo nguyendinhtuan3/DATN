@@ -47,13 +47,11 @@ const Navbar = () => {
                     <NavLink to="/tower" style={getNavLinkStyle}>
                         Tower
                     </NavLink>
-                    <NavLink to="/garden" style={getNavLinkStyle}>
+               {  (  user.role==='student'||!isUserLoggedIn) &&  <NavLink to="/garden" style={getNavLinkStyle}>
                         Garden
                     </NavLink>
-
-                    <NavLink to="/testing" style={getNavLinkStyle}>
-                        Testing
-                    </NavLink>
+}
+                   
                 </div>
 
                 {isUserLoggedIn ? (
@@ -81,6 +79,11 @@ const Navbar = () => {
                                     Course
                                 </MenuItem>
                             )}
+                            {user?.role === 'admin' &&   <MenuItem onClick={handleClose} component={Link} to="/admin/users">
+                                  User Management
+                                </MenuItem>
+
+}
                             <MenuItem onClick={handleLogout}>Logout</MenuItem>
                         </Menu>
                     </div>

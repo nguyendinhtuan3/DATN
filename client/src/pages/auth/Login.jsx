@@ -52,8 +52,8 @@ const Login = ({ onLogin }) => {
   return (
     <div className="form-container sign-in">
       <form onSubmit={handleLogin}>
-        <h1>Đăng nhập</h1>
-        <span>Hoặc sử dụng email và mật khẩu của bạn</span>
+        <h1>Login</h1>
+        <span>or use your email password</span>
 
         <InputField
           type="email"
