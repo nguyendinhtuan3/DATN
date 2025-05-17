@@ -5,19 +5,28 @@ const courseControllers = require('./controllers/courseControllers');
 const courseTypeControllers = require('./controllers/courseTypeControllers');
 const userControllers = require('./controllers/userControllers');
 const typecourseControllers = require('./controllers/typecourseControllers');
-const lessonControlers = require('./controllers/lessonControlers');
+const lessonControllers = require('./controllers/lessonControllers');
+const frameControllers = require('./controllers/frameControllers');
+const frameVocabularyControllers = require('./controllers/frameVocabularyControllers');
+const userFrameItemControllers = require('./controllers/userFrameItemControllers');
+const vocabularyControllers = require('./controllers/vocabularyControllers');
 const connectDatabase = require('./config/connectDatabase');
-const app = express();
 
+const app = express();
 app.use(cors());
 app.use(express.json());
 connectDatabase();
 app.use('/api', authControllers);
 app.use('/api/courses', courseControllers);
 app.use('/api/course-types', courseTypeControllers);
-app.use('/api/users', userControllers );
+app.use('/api/users', userControllers);
 app.use('/api/typecourse', typecourseControllers);
-app.use('/api/lessons', lessonControlers);
+app.use('/api/lessons', lessonControllers);
+app.use('/api/frames', frameControllers);
+app.use('/api/vocabularies', vocabularyControllers);
+app.use('/api/frame-vocabularies', frameVocabularyControllers);
+app.use('/api/user-frame-items', userFrameItemControllers);
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
