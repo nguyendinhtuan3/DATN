@@ -1,77 +1,37 @@
 const { DataTypes, Model } = require('sequelize');
-const { sequelize } = require('../../config/mysql');
+const { sequelize } = require('../config/mysql');
 
 class Vocabulary extends Model {
-    // Phương thức để lấy ví dụ từ metadata
-    getExamples() {
-        return this.metadata?.examples || [];
-    }
-
-    // Phương thức để lấy từ đồng nghĩa từ metadata
-    getSynonyms() {
-        return this.metadata?.synonyms || [];
-    }
-
-    // Phương thức để lấy từ trái nghĩa từ metadata
-    getAntonyms() {
-        return this.metadata?.antonyms || [];
-    }
-
-    // Phương thức để lấy độ khó từ metadata
-    getDifficultyLevel() {
-        return this.metadata?.difficultyLevel || 'basic';
-    }
-
-    // Phương thức để lấy chủ đề từ metadata
-    getTopic() {
-        return this.metadata?.topic || '';
+    static associate(models) {
+        Vocabulary.hasMany(models.FrameVocabulary, {
+            foreignKey: 'vocab_id',
+            as: 'frameVocabularies',
+        });
+        Vocabulary.belongsToMany(models.UserFrameItem, {
+            through: models.UserFrameItemVocabulary,
+            foreignKey: 'vocab_id',
+            otherKey: 'user_frame_item_id',
+            as: 'userFrameItems',
+        });
     }
 }
 
 Vocabulary.init(
     {
-        id: {
-            type: DataTypes.UUID,
-            defaultValue: DataTypes.UUIDV4,
-            primaryKey: true,
-            allowNull: false,
-        },
-        name: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        type: {
-            type: DataTypes.ENUM('noun', 'verb', 'adjective', 'adverb'),
-            allowNull: false,
-        },
-        phonetic: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        audio: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        metadata: {
-            type: DataTypes.JSON,
-            allowNull: true,
-            defaultValue: {
-                examples: [],
-                topic: '',
-                synonyms: [],
-                antonyms: [],
-                difficultyLevel: 'basic',
-                image: '',
-                relatedContent: [],
-                source: '',
-            },
-        },
+        id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true, allowNull: false },
+        english_word: { type: DataTypes.STRING(50), allowNull: false },
+        vietnamese_word: { type: DataTypes.STRING(50), allowNull: false },
+        part_of_speech: { type: DataTypes.STRING(20), allowNull: true },
+        image_seed_url: { type: DataTypes.STRING(255), allowNull: true },
+        image_sprout_url: { type: DataTypes.STRING(255), allowNull: true },
+        image_flower_url: { type: DataTypes.STRING(255), allowNull: true },
+        audio_url: { type: DataTypes.STRING(255), allowNull: true },
     },
     {
         sequelize,
         modelName: 'Vocabulary',
-        tableName: 'vocabularies',
-        timestamps: true,
+        tableName: 'vocabulary',
+        timestamps: false,
     },
 );
 

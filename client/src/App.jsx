@@ -14,6 +14,7 @@ import CourseListingPage from './pages/CourseListingPage';
 import CourseManagementPage from './pages/teacher/cource/courseManagementPage';
 import LessonManagementPage from './pages/teacher/lesson/LessonManagementPage';
 import PaymentConfirmPage from './pages/PaymentConfirmPage';
+import FramePage from './pages/FramePage';
 
 const App = () => {
     // const [user, setUser] = useState(null);
@@ -136,6 +137,7 @@ const App = () => {
                     ) : (
                         <>
                             <Route path="/payment-confirmation" element={<PaymentConfirmPage />} />
+                            <Route path="/garden" element={<FramePage />} />
                         </>
                     )}
                     <Route path="/profile" element={<ProfilePage />} />

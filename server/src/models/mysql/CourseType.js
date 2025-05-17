@@ -16,7 +16,7 @@ CourseType.init(
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
-            allowNull: false,
+            allowNull: true,
         },
         name: {
             type: DataTypes.STRING(100),
@@ -28,7 +28,7 @@ CourseType.init(
         modelName: 'CourseType',
         tableName: 'course_types',
         timestamps: true,
-    },
+    }
 );
 
 module.exports = CourseType;

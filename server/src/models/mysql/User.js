@@ -43,10 +43,6 @@ User.init(
             allowNull: false,
             unique: true,
         },
-        fullName: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
         role: {
             type: DataTypes.ENUM('admin', 'teacher', 'student'),
             allowNull: false,
@@ -59,11 +55,6 @@ User.init(
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: false,
-        },
-        level: {
-            type: DataTypes.INTEGER,
-            defaultValue: 1,
-            allowNull: false,
         },
     },
     {

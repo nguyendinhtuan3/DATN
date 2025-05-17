@@ -133,9 +133,6 @@ const CourseListingPage = () => {
 
                                 <div className="p-4">
                                     <div className="text-lg font-semibold mb-2 text-gray-800">📖 {course.title}</div>
-                                    <div className="text-sm mb-3 text-gray-600 line-clamp-2">
-                                        {parse(course.description)}
-                                    </div>
                                     <div className="text-sm mb-4 text-gray-700 flex items-center gap-2">
                                         🎯 <span>Course: {course.courseTypeName}</span>
                                     </div>

@@ -145,10 +145,7 @@ const CourseManagementPage = () => {
                             )}
                             <div className="p-4 flex flex-col flex-grow">
                                 <div className="text-lg font-semibold mb-1">📖 {course.title}</div>
-                                <div
-                                    className="text-sm mb-2 line-clamp-2"
-                                    dangerouslySetInnerHTML={{ __html: course.description }}
-                                ></div>
+
                                 <div className="text-xs text-gray-500 mb-4">Course Type: {course.courseTypeName}</div>
                                 <div className="flex gap-2 mt-auto">
                                     <button
