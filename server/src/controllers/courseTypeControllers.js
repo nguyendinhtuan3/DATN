@@ -32,21 +32,26 @@ router.get('/:id', async (req, res) => {
 });
 
 // 📌 Tạo loại khóa học mới (chỉ admin)
-router.post('/', verifyRole('admin'), async (req, res) => {
+const { v4: uuidv4 } = require('uuid');
+
+router.post('/add', verifyRole('admin'), async (req, res) => {
     try {
         const { name } = req.body;
         if (!name) return res.status(400).json({ status: false, message: 'Tên là bắt buộc' });
 
-        const conn = db.promise();
-        const [result] = await conn.query(`INSERT INTO course_types (name) VALUES (?)`, [name]);
+        const id = uuidv4(); // ✅ Tạo UUID mới
 
-        const [newRows] = await conn.query(`SELECT * FROM course_types WHERE id = ?`, [result.insertId]);
+        const conn = db.promise();
+        await conn.query(`INSERT INTO course_types (id, name) VALUES (?, ?)`, [id, name]);
+
+        const [newRows] = await conn.query(`SELECT * FROM course_types WHERE id = ?`, [id]);
 
         res.status(201).json({ status: true, data: newRows[0] });
     } catch (error) {
         res.status(500).json({ status: false, message: 'Tạo loại khóa học thất bại', details: error.message });
     }
 });
+
 
 // 📌 Cập nhật loại khóa học (chỉ admin)
 router.put('/:id', verifyRole('admin'), async (req, res) => {
