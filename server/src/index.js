@@ -3,11 +3,10 @@ const cors = require('cors');
 const authControllers = require('./controllers/authControllers');
 const courseControllers = require('./controllers/courseControllers');
 const courseTypeControllers = require('./controllers/courseTypeControllers');
-const userControllers = require('./controllers/userControllers'); 
+const userControllers = require('./controllers/userControllers');
 const lessonControllers = require('./controllers/lessonControllers');
 const frameControllers = require('./controllers/frameControllers');
 const frameVocabularyControllers = require('./controllers/frameVocabularyControllers');
-const userFrameItemControllers = require('./controllers/userFrameItemControllers');
 const vocabularyControllers = require('./controllers/vocabularyControllers');
 const connectDatabase = require('./config/connectDatabase');
 
@@ -23,7 +22,6 @@ app.use('/api/lessons', lessonControllers);
 app.use('/api/frames', frameControllers);
 app.use('/api/vocabularies', vocabularyControllers);
 app.use('/api/frame-vocabularies', frameVocabularyControllers);
-app.use('/api/user-frame-items', userFrameItemControllers);
 
 const PORT = process.env.PORT || 3000;
 

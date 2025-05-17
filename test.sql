@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 17, 2025 at 12:57 PM
+-- Generation Time: May 17, 2025 at 06:08 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -238,49 +238,6 @@ INSERT INTO `users` (`id`, `username`, `email`, `avatar`, `password`, `role`, `e
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user_frame_items`
---
-
-CREATE TABLE `user_frame_items` (
-  `id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `frame_id` int(11) NOT NULL,
-  `completed_count` int(11) DEFAULT 0,
-  `status` enum('seed','sprout','flower') DEFAULT 'seed',
-  `last_updated` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `user_frame_items`
---
-
-INSERT INTO `user_frame_items` (`id`, `user_id`, `frame_id`, `completed_count`, `status`, `last_updated`) VALUES
-(1, 6, 1, 11, 'flower', '2025-05-17 17:45:32'),
-(2, 6, 2, 0, 'flower', '2025-05-17 17:12:12'),
-(3, 10, 1, 0, 'seed', '2025-05-17 12:37:00'),
-(4, 10, 2, 0, 'seed', '2025-05-17 12:37:00'),
-(5, 6, 1, 1, 'seed', '2025-05-17 16:12:04'),
-(6, 6, 2, 1, 'seed', '2025-05-17 16:12:26'),
-(7, 10, 3, 0, 'seed', '2025-05-17 12:37:00'),
-(8, 10, 4, 0, 'seed', '2025-05-17 12:37:00'),
-(9, 6, 5, 0, 'seed', '2025-05-17 12:37:00'),
-(10, 6, 6, 4, 'sprout', '2025-05-17 17:52:10'),
-(11, 10, 7, 0, 'seed', '2025-05-17 12:37:00'),
-(12, 10, 8, 0, 'seed', '2025-05-17 12:37:00'),
-(13, 6, 9, 2, 'seed', '2025-05-17 17:52:06'),
-(14, 6, 10, 2, 'seed', '2025-05-17 17:52:07'),
-(15, 10, 11, 0, 'seed', '2025-05-17 12:37:00'),
-(16, 10, 12, 0, 'seed', '2025-05-17 12:37:00'),
-(17, 6, 13, 19, 'flower', '2025-05-17 17:45:38'),
-(18, 6, 14, 11, 'flower', '2025-05-17 17:45:40'),
-(19, 10, 15, 0, 'seed', '2025-05-17 12:37:00'),
-(20, 10, 16, 0, 'seed', '2025-05-17 12:37:00'),
-(21, 6, 17, 2, 'seed', '2025-05-17 17:52:04'),
-(22, 6, 18, 11, 'flower', '2025-05-17 17:45:42');
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `vocabulary`
 --
 
@@ -373,14 +330,6 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `email` (`email`);
 
 --
--- Indexes for table `user_frame_items`
---
-ALTER TABLE `user_frame_items`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `frame_id` (`frame_id`);
-
---
 -- Indexes for table `vocabulary`
 --
 ALTER TABLE `vocabulary`
@@ -421,12 +370,6 @@ ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT for table `user_frame_items`
---
-ALTER TABLE `user_frame_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
-
---
 -- AUTO_INCREMENT for table `vocabulary`
 --
 ALTER TABLE `vocabulary`
@@ -455,13 +398,6 @@ ALTER TABLE `frame_vocabulary`
 --
 ALTER TABLE `lessons`
   ADD CONSTRAINT `lessons_ibfk_1` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `user_frame_items`
---
-ALTER TABLE `user_frame_items`
-  ADD CONSTRAINT `user_frame_items_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `user_frame_items_ibfk_2` FOREIGN KEY (`frame_id`) REFERENCES `frames` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
