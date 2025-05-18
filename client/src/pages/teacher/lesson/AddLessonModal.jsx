@@ -97,10 +97,10 @@ function AddLessonModal({ isOpen, onClose, editingLesson }) {
                 showNotification('Cập nhật bài học thành công', true);
             } else {
                 res = await addLesson(formData);
-           
+
                 showNotification('Thêm bài học thành công', true);
             }
-            console.log("dsds",res)
+            console.log('dsds', res);
             if (res.status) {
                 onClose(res.data);
                 setFormData({
@@ -130,9 +130,7 @@ function AddLessonModal({ isOpen, onClose, editingLesson }) {
         <Overlay onClick={handleOverlayClick} className="z-[1000]">
             <div className="bg-white w-1/2 max-h-[90vh] overflow-y-auto rounded-lg shadow-lg p-6">
                 <div className="flex justify-between items-center mb-4 border-b pb-2">
-                    <h3 className="text-lg font-semibold">
-                        {editingLesson ? '✏️ Sửa Bài Học' : '➕ Thêm Bài Học'}
-                    </h3>
+                    <h3 className="text-lg font-semibold">{editingLesson ? '✏️ Sửa Bài Học' : '➕ Thêm Bài Học'}</h3>
                     <button
                         className="text-gray-500 hover:text-red-500 text-xl"
                         onClick={() => onClose(null)}
@@ -143,9 +141,7 @@ function AddLessonModal({ isOpen, onClose, editingLesson }) {
                 </div>
 
                 <div className="space-y-4">
-                    {formError && (
-                        <p className="text-red-500 text-sm bg-red-50 p-2 rounded">{formError}</p>
-                    )}
+                    {formError && <p className="text-red-500 text-sm bg-red-50 p-2 rounded">{formError}</p>}
 
                     <div>
                         <label className="block text-sm font-medium mb-1">Tiêu đề bài học</label>
@@ -171,7 +167,7 @@ function AddLessonModal({ isOpen, onClose, editingLesson }) {
                             disabled={loadingCourses}
                         >
                             <option value="">-- Chọn khóa học --</option>
-                            {courses.map((course) => (
+                            {courses?.map((course) => (
                                 <option key={course.id} value={course.id}>
                                     {course.title}
                                 </option>

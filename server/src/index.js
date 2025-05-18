@@ -8,12 +8,20 @@ const lessonControllers = require('./controllers/lessonControllers');
 const frameControllers = require('./controllers/frameControllers');
 const frameVocabularyControllers = require('./controllers/frameVocabularyControllers');
 const vocabularyControllers = require('./controllers/vocabularyControllers');
+const floor3Router = require('./controllers/floor3');
+const floor2Router = require('./controllers/floor2');
+const floor1Router = require('./controllers/floor1');
+
 const connectDatabase = require('./config/connectDatabase');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 connectDatabase();
+// Định nghĩa các route cho từng tầng
+app.use('/api/floor3', floor3Router);
+app.use('/api/floor2', floor2Router);
+app.use('/api/floor1', floor1Router);
 app.use('/api', authControllers);
 app.use('/api/courses', courseControllers);
 app.use('/api/course-types', courseTypeControllers);

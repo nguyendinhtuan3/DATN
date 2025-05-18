@@ -17,6 +17,9 @@ const mysqlModelsOrder = [
     'UserFrameItem.js',
     'Frame.js',
     'Vocabulary.js',
+    'floor3_listen_questions',
+    'floor1_matching_questions',
+    'floor2_maze_questions',
 ];
 
 // Load models MySQL

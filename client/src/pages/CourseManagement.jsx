@@ -42,7 +42,7 @@ const CourseManagement = () => {
                 <p>Data Loading...</p>
             ) : (
                 <div className="courses-list">
-                    {courses.map((course) => (
+                    {courses?.map((course) => (
                         <Card key={course.id} className="course-card">
                             <CardContent>
                                 <h3>{course.title}</h3>

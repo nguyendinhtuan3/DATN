@@ -63,7 +63,7 @@ const CourseManagementPage = () => {
             setCourses((prev) => {
                 if (editingCourse) {
                     // Update existing course
-                    return prev.map((course) => (course._id === updatedCourse._id ? updatedCourse : course));
+                    return prev?.map((course) => (course._id === updatedCourse._id ? updatedCourse : course));
                 } else {
                     // Add new course
                     return [updatedCourse, ...prev];
@@ -130,7 +130,7 @@ const CourseManagementPage = () => {
                 {error && <p className="text-red-500">{error}</p>}
 
                 <div className="grid grid-cols-3 gap-6">
-                    {courses.map((course) => (
+                    {courses?.map((course) => (
                         <div key={course._id} className="bg-white w-full shadow-md rounded-md flex flex-col">
                             {course.image ? (
                                 <img

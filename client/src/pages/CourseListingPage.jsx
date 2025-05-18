@@ -96,7 +96,7 @@ const CourseListingPage = () => {
         };
 
         const sortedParams = sortObject(paymentData)
-            .map((key) => `${key}=${encodeURIComponent(paymentData[key])}`)
+            ?.map((key) => `${key}=${encodeURIComponent(paymentData[key])}`)
             .join('&');
 
         const vnp_SecureHash = calculateVnpSecureHash(sortedParams, vnp_HashSecret);
@@ -114,7 +114,7 @@ const CourseListingPage = () => {
 
                 {!selectedCourse && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filteredCourses.map((course) => (
+                        {filteredCourses?.map((course) => (
                             <div
                                 key={course.id}
                                 className="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300"

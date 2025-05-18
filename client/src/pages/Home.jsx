@@ -91,7 +91,7 @@ const Home = () => {
                             image: minigame,
                             bg: 'bg-blue-100',
                         },
-                    ].map((item, index) => (
+                    ]?.map((item, index) => (
                         <div
                             key={index}
                             className={`${item.bg} rounded-2xl shadow hover:shadow-lg transition duration-300`}

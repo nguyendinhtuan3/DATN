@@ -41,7 +41,7 @@ const FramePage = () => {
                 const relatedVocabs = res.data || [];
                 const count = localProgress[selectedFrameId] || 0;
 
-                const vocabList = relatedVocabs.map((vocab) => ({
+                const vocabList = relatedVocabs?.map((vocab) => ({
                     ...vocab,
                     completed_count: count,
                 }));
@@ -91,7 +91,7 @@ const FramePage = () => {
         }));
 
         setCurrentVocabs((prev) =>
-            prev.map((vocab, index) => (index === currentIndex ? { ...vocab, completed_count: newCount } : vocab)),
+            prev?.map((vocab, index) => (index === currentIndex ? { ...vocab, completed_count: newCount } : vocab)),
         );
 
         setCurrentIndex((prev) => (prev + 1) % currentVocabs.length);
@@ -155,7 +155,7 @@ const FramePage = () => {
                 </div>
 
                 <div className="grid grid-cols-5 gap-2 mb-12">
-                    {frames.map((frame) => (
+                    {frames?.map((frame) => (
                         <div
                             key={frame.id}
                             onClick={() => handleFrameSelect(frame.id)}

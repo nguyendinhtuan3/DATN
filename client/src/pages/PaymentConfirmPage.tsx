@@ -21,7 +21,7 @@ const PaymentConfirmPage = () => {
             const { vnp_SecureHash, ...vnp_Params } = queries;
 
             const sortedParams = sortObject(vnp_Params)
-                .map((key: string) => `${key}=${encodeURIComponent(vnp_Params[key] as string)}`)
+                ?.map((key: string) => `${key}=${encodeURIComponent(vnp_Params[key] as string)}`)
                 .join('&');
 
             const signed = calculateVnpSecureHash(sortedParams, vnp_HashSecret);

@@ -12,7 +12,7 @@ const CourseTypeSidebar = ({ courseTypes, selectedType, onTypeChange }) => {
                     />
                     ALL
                 </label>
-                {courseTypes.map((type) => (
+                {courseTypes?.map((type) => (
                     <label key={type.id} className="flex items-center">
                         <input
                             type="checkbox"

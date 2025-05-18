@@ -150,8 +150,8 @@ function AddCourseModal({ isOpen, onClose, editingCourse }) {
     };
 
     if (!isOpen) return null;
-        
-const handleOverlayClick = (e) => {
+
+    const handleOverlayClick = (e) => {
         if (e.target === e.currentTarget) {
             onClose(null); // Close modal when clicking outside
         }
@@ -208,7 +208,7 @@ const handleOverlayClick = (e) => {
                             disabled={loadingTypes}
                         >
                             <option value="">-- Chọn loại khóa học --</option>
-                            {courseTypes.map((type) => (
+                            {courseTypes?.map((type) => (
                                 <option key={type.id} value={type.id}>
                                     {type.name}
                                 </option>

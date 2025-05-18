@@ -136,10 +136,10 @@ const Sidebar = () => {
             </div>
 
             <Menu theme="dark" mode="inline" selectedKeys={[currentKey]} onClick={handleMenuClick}>
-                {menuItems.map((item) =>
+                {menuItems?.map((item) =>
                     item.children ? (
                         <Menu.SubMenu key={item.key} icon={item.icon} title={item.label}>
-                            {item.children.map((subItem) => (
+                            {item.children?.map((subItem) => (
                                 <Menu.Item key={subItem.key} icon={subItem.icon}>
                                     {subItem.label}
                                 </Menu.Item>

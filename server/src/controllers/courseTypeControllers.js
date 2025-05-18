@@ -52,7 +52,6 @@ router.post('/add', verifyRole('admin'), async (req, res) => {
     }
 });
 
-
 // 📌 Cập nhật loại khóa học (chỉ admin)
 router.put('/:id', verifyRole('admin'), async (req, res) => {
     try {
@@ -77,13 +76,29 @@ router.put('/:id', verifyRole('admin'), async (req, res) => {
 router.delete('/:id', verifyRole('admin'), async (req, res) => {
     try {
         const conn = db.promise();
-        const [rows] = await conn.query(`SELECT * FROM course_types WHERE id = ?`, [req.params.id]);
+        const courseTypeId = req.params.id;
 
-        if (rows.length === 0) {
-            return res.status(404).json({ status: false, message: 'Không tìm thấy loại khóa học' });
+        // Kiểm tra loại khóa học có tồn tại không
+        const [courseTypeRows] = await conn.query(`SELECT * FROM course_types WHERE id = ?`, [courseTypeId]);
+
+        if (courseTypeRows.length === 0) {
+            return res.status(300).json({ status: false, message: 'Không tìm thấy loại khóa học' });
         }
 
-        await conn.query(`DELETE FROM course_types WHERE id = ?`, [req.params.id]);
+        // Kiểm tra xem có khóa học nào đang sử dụng loại này không
+        const [courseUsingType] = await conn.query(`SELECT COUNT(*) AS count FROM courses WHERE courseTypeId = ?`, [
+            courseTypeId,
+        ]);
+
+        if (courseUsingType[0].count > 0) {
+            return res.status(300).json({
+                status: false,
+                message: 'Không thể xóa vì vẫn còn khóa học thuộc loại này',
+            });
+        }
+
+        // Nếu không có khóa học nào sử dụng, tiến hành xóa
+        await conn.query(`DELETE FROM course_types WHERE id = ?`, [courseTypeId]);
 
         res.status(200).json({ status: true, message: 'Xóa thành công' });
     } catch (error) {
