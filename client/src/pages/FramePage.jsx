@@ -22,7 +22,7 @@ const FramePage = () => {
             try {
                 const framesRes = await getAllFrames();
                 setFrames(framesRes.data || []);
-                if (framesRes.data?.length) {
+                if (framesRes.data?.length > 0) {
                     setSelectedFrameId(framesRes.data[0].id);
                 }
             } catch (err) {

@@ -27,7 +27,30 @@ const Floor1 = () => {
         try {
             const response = await getFloor1Question();
             if (response.status && response.data?.length > 0) {
-                setQuestions(response.data);
+                // Chuẩn hóa dữ liệu
+                const normalizedData = response.data.map((question) => {
+                    let parsedOptions = [];
+                    try {
+                        // Parse chuỗi escape của options
+                        const cleanedOptions = JSON.parse(question.options); // Lần 1: Parse chuỗi escape
+                        parsedOptions = JSON.parse(cleanedOptions); // Lần 2: Parse chuỗi JSON thành mảng
+                        if (!Array.isArray(parsedOptions)) {
+                            console.error('Options không phải mảng sau khi parse:', cleanedOptions);
+                            parsedOptions = [];
+                        }
+                    } catch (e) {
+                        console.error('Lỗi parse options cho câu hỏi ID:', question.id, e);
+                        parsedOptions = [];
+                    }
+
+                    return {
+                        ...question,
+                        options: parsedOptions,
+                        correct_answer: question.correct_answer?.trim() || '',
+                        audio_url: question.audio_url || null,
+                    };
+                });
+                setQuestions(normalizedData);
                 setCurrentQuestionIndex(0);
                 resetAnswerState();
             } else {
@@ -54,8 +77,10 @@ const Floor1 = () => {
     };
 
     const handlePlayAudio = () => {
-        if (audioRef.current) {
-            audioRef.current.play();
+        if (audioRef.current && audioRef.current.src) {
+            audioRef.current.play().catch((err) => {
+                console.error('Lỗi phát âm thanh:', err);
+            });
         }
     };
 
@@ -70,21 +95,23 @@ const Floor1 = () => {
 
         if (correct) {
             const newStreak = correctStreak + 1;
+            setCorrectStreak(newStreak);
 
             new Audio(votayAudio).play();
             if (newStreak === 5) {
                 triggerConfetti();
+                showNotification('Chúc mừng! Bạn đã đạt 5 câu đúng liên tiếp!', true);
                 return;
             }
 
             setTimeout(() => {
                 nextQuestion();
-            }, 1500); // Đợi 1.5 giây rồi chuyển câu hỏi tiếp
+            }, 1500);
         } else {
-            // Nếu sai thì vẫn đợi 1.5 giây rồi chuyển tiếp
+            setCorrectStreak(0);
             setTimeout(() => {
                 nextQuestion();
-            }, 2000);
+            }, 1500);
         }
     };
 
@@ -106,13 +133,11 @@ const Floor1 = () => {
         return <div className="text-center mt-6 text-red-500">Không có câu hỏi để hiển thị.</div>;
 
     const currentQuestion = questions[currentQuestionIndex];
-    let options = [];
 
-    try {
-        options = currentQuestion.options ? JSON.parse(currentQuestion.options) : [];
-    } catch (e) {
-        console.error('Lỗi parse options:', e);
-        return <div className="text-center mt-6 text-red-500">Dữ liệu không hợp lệ.</div>;
+    // Kiểm tra options trước khi render
+    if (!Array.isArray(currentQuestion.options)) {
+        console.error('Options không phải mảng cho câu hỏi:', currentQuestion);
+        return <div className="text-center mt-6 text-red-500">Dữ liệu câu hỏi không hợp lệ.</div>;
     }
 
     return (
@@ -131,24 +156,25 @@ const Floor1 = () => {
                 </div>
 
                 <div className="relative w-full md:w-1/2 h-80 bg-green-100 p-6 flex flex-col justify-center">
-                    <button
-                        className="absolute top-4 right-4 text-xl text-black hover:text-green-700"
-                        onClick={handlePlayAudio}
-                    >
-                        <FaVolumeUp />
-                    </button>
-                    <audio ref={audioRef} src={currentQuestion.audio_url} />
+                    {currentQuestion.audio_url && (
+                        <>
+                            <button
+                                className="absolute top-4 right-4 text-xl text-black hover:text-green-700"
+                                onClick={handlePlayAudio}
+                            >
+                                <FaVolumeUp />
+                            </button>
+                            <audio ref={audioRef} src={currentQuestion.audio_url} />
+                        </>
+                    )}
 
                     <div className="flex flex-col gap-4">
-                        {options?.map((option, index) => {
+                        {currentQuestion.options.map((option, index) => {
                             let bgColor = 'bg-white';
-
                             if (selectedAnswer !== null) {
                                 if (option === selectedAnswer) {
-                                    // Nền đỏ nếu chọn sai, nền xanh nếu đúng
                                     bgColor = isCorrect ? 'bg-green-300' : 'bg-red-300';
                                 } else if (!isCorrect && option === currentQuestion.correct_answer) {
-                                    // Nếu chọn sai, tô xanh nền đáp án đúng
                                     bgColor = 'bg-green-300';
                                 }
                             }
@@ -158,7 +184,7 @@ const Floor1 = () => {
                                     key={index}
                                     onClick={() => handleAnswer(option)}
                                     disabled={selectedAnswer !== null}
-                                    className={`rounded-full py-3 px-5 text-left text-base ${bgColor} hover:bg-gray-200 border transition duration-300`}
+                                    className={`rounded-full py-3 px-5 text-left text-base ${bgColor} hover:bg-gray-200 border transition duration-300 disabled:cursor-not-allowed`}
                                 >
                                     {option}
                                 </button>
@@ -171,8 +197,8 @@ const Floor1 = () => {
             {correctStreak >= 5 && (
                 <button
                     onClick={() => {
+                        navigate('/level2');
                         triggerConfetti();
-                        navigate('/floor2');
                     }}
                     className="mt-8 bg-green-500 text-white text-lg px-8 py-3 rounded-full hover:bg-green-600 transition duration-300 shadow-lg animate-bounce"
                 >

@@ -134,7 +134,9 @@ const Floor2 = () => {
         });
         currentSound.play();
     };
-
+    if (currentQuestion?.options) {
+        console.log(JSON.parse(currentQuestion?.options)[0]);
+    }
     return (
         <div className="flex flex-col items-center p-4">
             <h2 className="text-2xl font-bold mb-4">FLOOR 2: MAZE LOST</h2>
@@ -149,7 +151,7 @@ const Floor2 = () => {
             {answeredCells.length === countWalkableCells() && (
                 <>
                     <button
-                        onClick={() => navigate('/floor3')}
+                        onClick={() => navigate('/level3')}
                         className="mt-6 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
                     >
                         Sang tầng tiếp theo
@@ -183,24 +185,26 @@ const Floor2 = () => {
                                 <span>Play Audio</span>
                             </button>
                         )}
-                        <div className="flex justify-center flex-wrap gap-4">
-                            {JSON.parse(currentQuestion.options)?.map((opt, idx) => (
-                                <div
-                                    key={idx}
-                                    className="flex flex-col items-center cursor-pointer group"
-                                    onClick={() => handleAnswer(opt)}
-                                >
-                                    <img
-                                        src={ong}
-                                        alt={`Option ${opt}`}
-                                        className="w-16 h-16 mb-1 transition-transform duration-200 group-hover:scale-110"
-                                    />
-                                    <div className="bg-yellow-300 rounded-full px-3 py-1 font-semibold text-black text-sm shadow">
-                                        {String.fromCharCode(65 + idx)}
+                        {currentQuestion?.options && (
+                            <div className="flex justify-center flex-wrap gap-4">
+                                {JSON.parse(JSON.parse(currentQuestion.options))?.map((opt, idx) => (
+                                    <div
+                                        key={idx}
+                                        className="flex flex-col items-center cursor-pointer group"
+                                        onClick={() => handleAnswer(opt)}
+                                    >
+                                        <img
+                                            src={ong}
+                                            alt={`Option ${opt}`}
+                                            className="w-16 h-16 mb-1 transition-transform duration-200 group-hover:scale-110"
+                                        />
+                                        <div className="bg-yellow-300 rounded-full px-3 py-1 font-semibold text-black text-sm shadow">
+                                            {String.fromCharCode(65 + idx)}
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

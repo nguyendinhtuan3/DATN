@@ -17,6 +17,12 @@ import UserManagement from './pages/admin/userManagement';
 import Floor3 from './pages/Floor3';
 import Floor2 from './pages/Floor2';
 import Floor1 from './pages/Floor1';
+import FramesPage from './pages/admin/FramesPage';
+import VocabularyPage from './pages/admin/VocabularyPage';
+import FrameVocabularyPage from './pages/admin/FrameVocabularyPage';
+import Floor1Manager from './pages/admin/Floor1Manager';
+import Floor2MazePopupPage from './pages/admin/Floor2MazePopupPage';
+import Floor3ListenChoosePage from './pages/admin/Floor3ListenChoosePage';
 
 const App = () => {
     const { user, isUserLoggedIn } = useAuthStore();
@@ -31,6 +37,12 @@ const App = () => {
                         <>
                             <Route path="/admin/type-course" element={<CourseTypeManagement />} />
                             <Route path="/admin/users" element={<UserManagement />} />
+                            <Route path="/admin/frames" element={<FramesPage />} />
+                            <Route path="/admin/vocabulary" element={<VocabularyPage />} />
+                            <Route path="/admin/frame-vocabulary" element={<FrameVocabularyPage />} />
+                            <Route path="/admin/floor1" element={<Floor1Manager />} />
+                            <Route path="/admin/floor2" element={<Floor2MazePopupPage />} />
+                            <Route path="/admin/floor3" element={<Floor3ListenChoosePage />} />
                         </>
                     ) : user.role === 'teacher' ? (
                         <>
@@ -42,8 +54,7 @@ const App = () => {
                             <Route path="/payment-confirmation" element={<PaymentConfirmPage />} />
                         </>
                     )}
-                    {(user.role === 'student' || !isUserLoggedIn) && <Route path="/garden" element={<FramePage />} />}
-
+                    <Route path="/garden" element={<FramePage />} />
                     <Route path="/level3" element={<Floor3 />} />
                     <Route path="/level2" element={<Floor2 />} />
                     <Route path="/level1" element={<Floor1 />} />

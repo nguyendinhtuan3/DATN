@@ -88,11 +88,9 @@ const Navbar = () => {
                         </MenuItem>
                     </Menu>
 
-                    {(user.role === 'student' || !isUserLoggedIn) && (
-                        <NavLink to="/garden" style={getNavLinkStyle}>
-                            Garden
-                        </NavLink>
-                    )}
+                    <NavLink to="/garden" style={getNavLinkStyle}>
+                        Garden
+                    </NavLink>
                 </div>
 
                 {isUserLoggedIn ? (

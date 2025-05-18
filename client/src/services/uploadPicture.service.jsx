@@ -16,17 +16,18 @@ export const apiUploadImage = async (data) => {
     }
 };
 
-export const apiUploadAudio = async (data) => {
+export const apiUploadAudio = async (file) => {
     try {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', import.meta.env.VITE_REACT_UPLOAD_PRESET);
+        formData.append('resource_type', 'video'); // hoặc 'auto' nếu muốn tự động
         const res = await axios.post(
             `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_REACT_CLOUDINARY_CLOUD_NAME}/video/upload`,
-            data,
+            formData,
         );
-        return res.data;
+        return { success: true, url: res.data.secure_url };
     } catch (error) {
-        return {
-            success: false,
-            message: error,
-        };
+        return { success: false, message: error.message || 'Upload failed' };
     }
 };
