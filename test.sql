@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 17, 2025 at 06:08 PM
+-- Generation Time: May 18, 2025 at 06:46 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -74,6 +74,72 @@ INSERT INTO `course_types` (`id`, `name`, `createdAt`, `updatedAt`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `floor1_picture_match`
+--
+
+CREATE TABLE `floor1_picture_match` (
+  `id` int(11) NOT NULL,
+  `image_url` varchar(255) NOT NULL,
+  `audio_url` varchar(255) NOT NULL,
+  `options` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`options`)),
+  `correct_answer` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `floor1_picture_match`
+--
+
+INSERT INTO `floor1_picture_match` (`id`, `image_url`, `audio_url`, `options`, `correct_answer`) VALUES
+(6, 'https://res.cloudinary.com/dmcewmxyx/image/upload/v1747581404/dpshopvn/igstw6nezwrq834vi3ke.png', '', '\"[\\\"s\\\",\\\"a\\\",\\\"2\\\"]\"', 'a'),
+(7, 'https://res.cloudinary.com/dmcewmxyx/image/upload/v1747581552/dpshopvn/xdl9kg2c555k6se4g7s1.png', '', '\"[\\\"a\\\",\\\"b\\\",\\\"c\\\"]\"', 'a   '),
+(8, 'https://res.cloudinary.com/dmcewmxyx/image/upload/v1747581728/dpshopvn/zzjxg63vv3fg6vrenocj.png', '', '\"[\\\"s\\\",\\\"ưe\\\",\\\"ư\\\"]\"', 's'),
+(9, 'https://res.cloudinary.com/dmcewmxyx/image/upload/v1747582690/dpshopvn/smpvzre4d0o7omhrnrka.png', 'https://res.cloudinary.com/dmcewmxyx/video/upload/v1747582717/dpshopvn/psa3a5chs2nkyyqsxujq.mp3', '\"[\\\"t\\\",\\\"b\\\",\\\"a\\\"]\"', 'a');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `floor2_maze_popup`
+--
+
+CREATE TABLE `floor2_maze_popup` (
+  `id` int(11) NOT NULL,
+  `audio_url` varchar(255) DEFAULT NULL,
+  `options` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`options`)),
+  `correct_answer` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `floor2_maze_popup`
+--
+
+INSERT INTO `floor2_maze_popup` (`id`, `audio_url`, `options`, `correct_answer`) VALUES
+(2, 'https://res.cloudinary.com/dmcewmxyx/video/upload/v1747583211/dpshopvn/ds9odbf2lkbxky61fhqv.mp3', '\"[\\\"1. Open the door.\\\",\\\"2. Close the window.\\\",\\\"3. Sit down.\\\"]\"', '1. Open the door.');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `floor3_listen_choose`
+--
+
+CREATE TABLE `floor3_listen_choose` (
+  `id` int(11) NOT NULL,
+  `question` text NOT NULL,
+  `audio_url` varchar(255) DEFAULT NULL,
+  `options` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`options`)),
+  `correct_answer` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `floor3_listen_choose`
+--
+
+INSERT INTO `floor3_listen_choose` (`id`, `question`, `audio_url`, `options`, `correct_answer`) VALUES
+(1, 'Listen to the audio and choose the correct sentence.', 'https://example.com/audio1.mp3', '[ \"The man is running.\", \"The man is walking.\", \"The man is sitting.\" ]', 'The man is running.'),
+(2, 'Listen to the audio and select the correct activity.', 'https://example.com/audio2.mp3', '[ \"She is cooking.\", \"She is sleeping.\", \"She is reading.\" ]', 'She is cooking.');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `frames`
 --
 
@@ -127,7 +193,6 @@ CREATE TABLE `frame_vocabulary` (
 --
 
 INSERT INTO `frame_vocabulary` (`id`, `frame_id`, `vocab_id`, `position`) VALUES
-(1, 1, 1, 1),
 (2, 1, 2, 2),
 (3, 1, 3, 3),
 (4, 2, 3, 1),
@@ -152,7 +217,6 @@ INSERT INTO `frame_vocabulary` (`id`, `frame_id`, `vocab_id`, `position`) VALUES
 (23, 8, 22, 2),
 (24, 8, 23, 3),
 (25, 9, 24, 1),
-(26, 9, 25, 2),
 (27, 9, 1, 3),
 (28, 10, 2, 1),
 (29, 10, 3, 2),
@@ -177,10 +241,13 @@ INSERT INTO `frame_vocabulary` (`id`, `frame_id`, `vocab_id`, `position`) VALUES
 (48, 16, 22, 3),
 (49, 17, 23, 1),
 (50, 17, 24, 2),
-(51, 17, 25, 3),
 (52, 18, 1, 1),
 (53, 18, 2, 2),
-(54, 18, 3, 3);
+(54, 18, 3, 3),
+(55, 10, 3, 0),
+(56, 11, 13, 0),
+(57, 1, 15, 0),
+(58, 1, 14, 0);
 
 -- --------------------------------------------------------
 
@@ -228,11 +295,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `avatar`, `password`, `role`, `emailVerified`, `createdAt`, `updatedAt`) VALUES
-(6, 'datp1907@gmail.com', 'datp1907@gmail.com', NULL, '$2b$10$NvPi4doQAMGVdVdxhBPoAOdpDW8p3hV0xANW9APG3FR62R5iieiua', 'student', 0, '2025-05-16 05:06:03', '2025-05-16 05:06:26'),
+(6, 'datp1907@gmail.com', 'datp1907@gmail.com', NULL, '$2b$10$NvPi4doQAMGVdVdxhBPoAOdpDW8p3hV0xANW9APG3FR62R5iieiua', 'admin', 0, '2025-05-16 05:06:03', '2025-05-18 13:36:07'),
 (8, 'test@gmail.com', 'test@gmail.com', NULL, '$2b$10$N9b.jg8v9XXPWXAZthj3nuhWOAJc1K.BuF/uue5whVZBBza51S656', 'admin', 0, '2025-05-16 07:09:32', '2025-05-16 11:48:39'),
 (9, 'anhtai', 'thaianhtai167@gmail.com', NULL, '$2b$10$0a7.QLHCxoncNaLLxnFZxeaYp4daX6mkUz0aCA3H8nqoF9T9fWnq.', 'admin', 0, '2025-05-16 07:12:01', '2025-05-16 08:13:07'),
 (10, 'daicatai', 'tes1@gmail.com', NULL, '$2b$10$.TRHBRU4/gdmbkVglSpgL.IIc6.mHODjaGloqkX4n2gbVtbcKnSFa', 'student', 0, '2025-05-16 07:26:20', '2025-05-16 08:14:26'),
-(11, 'daicatai', 'test10@gmail.com', NULL, '$2b$10$xDT00ILe6riv7XbuPvkrFuEauKKcRHhrA5OM7Bt7gYyyRJ4a33v3G', 'teacher', 0, '2025-05-16 07:28:21', '2025-05-16 14:09:48'),
 (12, 'teacher@gmail.com', 'teacher@gmail.com', '/src/assets/image/minigame.png', '$2b$10$odVUpceeVGbiFvvhHIpHw.n9ZirmjD9VsGAJkWuzXMkYo1VnGgh.S', 'teacher', 0, '0000-00-00 00:00:00', '2025-05-16 14:11:42');
 
 -- --------------------------------------------------------
@@ -246,9 +312,6 @@ CREATE TABLE `vocabulary` (
   `english_word` varchar(50) NOT NULL,
   `vietnamese_word` varchar(50) NOT NULL,
   `part_of_speech` varchar(20) NOT NULL,
-  `image_seed_url` varchar(255) DEFAULT NULL,
-  `image_sprout_url` varchar(255) DEFAULT NULL,
-  `image_flower_url` varchar(255) DEFAULT NULL,
   `audio_url` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -256,32 +319,33 @@ CREATE TABLE `vocabulary` (
 -- Dumping data for table `vocabulary`
 --
 
-INSERT INTO `vocabulary` (`id`, `english_word`, `vietnamese_word`, `part_of_speech`, `image_seed_url`, `image_sprout_url`, `image_flower_url`, `audio_url`) VALUES
-(1, 'Lemon', 'Chanh', '(Noun)', 'https://example.com/seed_lemon.jpg', 'https://example.com/sprout_lemon.jpg', 'https://example.com/flower_lemon.jpg', 'https://example.com/audio_lemon.mp3'),
-(2, 'Apple', 'Táo', '(Noun)', 'https://example.com/seed_apple.jpg', 'https://example.com/sprout_apple.jpg', 'https://example.com/flower_apple.jpg', 'https://example.com/audio_apple.mp3'),
-(3, 'Orange', 'Cam', '(Noun)', 'https://example.com/seed_orange.jpg', 'https://example.com/sprout_orange.jpg', 'https://example.com/flower_orange.jpg', 'https://example.com/audio_orange.mp3'),
-(4, 'Mango', 'Xoài', '(Noun)', 'https://example.com/seed_mango.jpg', 'https://example.com/sprout_mango.jpg', 'https://example.com/flower_mango.jpg', 'https://example.com/audio_mango.mp3'),
-(5, 'Banana', 'Chuối', '(Noun)', 'https://example.com/seed_banana.jpg', 'https://example.com/sprout_banana.jpg', 'https://example.com/flower_banana.jpg', 'https://example.com/audio_banana.mp3'),
-(6, 'Grape', 'Nho', '(Noun)', 'https://example.com/seed_grape.jpg', 'https://example.com/sprout_grape.jpg', 'https://example.com/flower_grape.jpg', 'https://example.com/audio_grape.mp3'),
-(7, 'Pineapple', 'Dứa', '(Noun)', 'https://example.com/seed_pineapple.jpg', 'https://example.com/sprout_pineapple.jpg', 'https://example.com/flower_pineapple.jpg', 'https://example.com/audio_pineapple.mp3'),
-(8, 'Watermelon', 'Dưa hấu', '(Noun)', 'https://example.com/seed_watermelon.jpg', 'https://example.com/sprout_watermelon.jpg', 'https://example.com/flower_watermelon.jpg', 'https://example.com/audio_watermelon.mp3'),
-(9, 'Strawberry', 'Dâu tây', '(Noun)', 'https://example.com/seed_strawberry.jpg', 'https://example.com/sprout_strawberry.jpg', 'https://example.com/flower_strawberry.jpg', 'https://example.com/audio_strawberry.mp3'),
-(10, 'Peach', 'Đào', '(Noun)', 'https://example.com/seed_peach.jpg', 'https://example.com/sprout_peach.jpg', 'https://example.com/flower_peach.jpg', 'https://example.com/audio_peach.mp3'),
-(11, 'Cherry', 'Anh đào', '(Noun)', 'https://example.com/seed_cherry.jpg', 'https://example.com/sprout_cherry.jpg', 'https://example.com/flower_cherry.jpg', 'https://example.com/audio_cherry.mp3'),
-(12, 'Pear', 'Lê', '(Noun)', 'https://example.com/seed_pear.jpg', 'https://example.com/sprout_pear.jpg', 'https://example.com/flower_pear.jpg', 'https://example.com/audio_pear.mp3'),
-(13, 'Kiwi', 'Kiwi', '(Noun)', 'https://example.com/seed_kiwi.jpg', 'https://example.com/sprout_kiwi.jpg', 'https://example.com/flower_kiwi.jpg', 'https://example.com/audio_kiwi.mp3'),
-(14, 'Pomegranate', 'Lựu', '(Noun)', 'https://example.com/seed_pomegranate.jpg', 'https://example.com/sprout_pomegranate.jpg', 'https://example.com/flower_pomegranate.jpg', 'https://example.com/audio_pomegranate.mp3'),
-(15, 'Avocado', 'Bơ', '(Noun)', 'https://example.com/seed_avocado.jpg', 'https://example.com/sprout_avocado.jpg', 'https://example.com/flower_avocado.jpg', 'https://example.com/audio_avocado.mp3'),
-(16, 'Coconut', 'Dừa', '(Noun)', 'https://example.com/seed_coconut.jpg', 'https://example.com/sprout_coconut.jpg', 'https://example.com/flower_coconut.jpg', 'https://example.com/audio_coconut.mp3'),
-(17, 'Blueberry', 'Việt quất', '(Noun)', 'https://example.com/seed_blueberry.jpg', 'https://example.com/sprout_blueberry.jpg', 'https://example.com/flower_blueberry.jpg', 'https://example.com/audio_blueberry.mp3'),
-(18, 'Raspberry', 'Mâm xôi', '(Noun)', 'https://example.com/seed_raspberry.jpg', 'https://example.com/sprout_raspberry.jpg', 'https://example.com/flower_raspberry.jpg', 'https://example.com/audio_raspberry.mp3'),
-(19, 'Plum', 'Mận', '(Noun)', 'https://example.com/seed_plum.jpg', 'https://example.com/sprout_plum.jpg', 'https://example.com/flower_plum.jpg', 'https://example.com/audio_plum.mp3'),
-(20, 'Apricot', 'Mơ', '(Noun)', 'https://example.com/seed_apricot.jpg', 'https://example.com/sprout_apricot.jpg', 'https://example.com/flower_apricot.jpg', 'https://example.com/audio_apricot.mp3'),
-(21, 'Fig', 'Sung', '(Noun)', 'https://example.com/seed_fig.jpg', 'https://example.com/sprout_fig.jpg', 'https://example.com/flower_fig.jpg', 'https://example.com/audio_fig.mp3'),
-(22, 'Dragonfruit', 'Thanh long', '(Noun)', 'https://example.com/seed_dragonfruit.jpg', 'https://example.com/sprout_dragonfruit.jpg', 'https://example.com/flower_dragonfruit.jpg', 'https://example.com/audio_dragonfruit.mp3'),
-(23, 'Lychee', 'Vải', '(Noun)', 'https://example.com/seed_lychee.jpg', 'https://example.com/sprout_lychee.jpg', 'https://example.com/flower_lychee.jpg', 'https://example.com/audio_lychee.mp3'),
-(24, 'Papaya', 'Đu đủ', '(Noun)', 'https://example.com/seed_papaya.jpg', 'https://example.com/sprout_papaya.jpg', 'https://example.com/flower_papaya.jpg', 'https://example.com/audio_papaya.mp3'),
-(25, 'Guava', 'Ổi', '(Noun)', 'https://example.com/seed_guava.jpg', 'https://example.com/sprout_guava.jpg', 'https://example.com/flower_guava.jpg', 'https://example.com/audio_guava.mp3');
+INSERT INTO `vocabulary` (`id`, `english_word`, `vietnamese_word`, `part_of_speech`, `audio_url`) VALUES
+(1, 'Lemon', 'Chanh', '(Noun)', 'https://example.com/audio_lemon.mp3'),
+(2, 'Apple', 'Táo', '(Noun)', 'https://example.com/audio_apple.mp3'),
+(3, 'Orange', 'Cam', '(Noun)', 'https://example.com/audio_orange.mp3'),
+(4, 'Mango', 'Xoài', '(Noun)', 'https://example.com/audio_mango.mp3'),
+(5, 'Banana', 'Chuối', '(Noun)', 'https://example.com/audio_banana.mp3'),
+(6, 'Grape', 'Nho', '(Noun)', 'https://example.com/audio_grape.mp3'),
+(7, 'Pineapple', 'Dứa', '(Noun)', 'https://example.com/audio_pineapple.mp3'),
+(8, 'Watermelon', 'Dưa hấu', '(Noun)', 'https://example.com/audio_watermelon.mp3'),
+(9, 'Strawberry', 'Dâu tây', '(Noun)', 'https://example.com/audio_strawberry.mp3'),
+(10, 'Peach', 'Đào', '(Noun)', 'https://example.com/audio_peach.mp3'),
+(11, 'Cherry', 'Anh đào', '(Noun)', 'https://example.com/audio_cherry.mp3'),
+(12, 'Pear', 'Lê', '(Noun)', 'https://example.com/audio_pear.mp3'),
+(13, 'Kiwi', 'Kiwi', '(Noun)', 'https://example.com/audio_kiwi.mp3'),
+(14, 'Pomegranate', 'Lựu', '(Noun)', 'https://example.com/audio_pomegranate.mp3'),
+(15, 'Avocado', 'Bơ', '(Noun)', 'https://example.com/audio_avocado.mp3'),
+(16, 'Coconut', 'Dừa', '(Noun)', 'https://example.com/audio_coconut.mp3'),
+(17, 'Blueberry', 'Việt quất', '(Noun)', 'https://example.com/audio_blueberry.mp3'),
+(18, 'Raspberry', 'Mâm xôi', '(Noun)', 'https://example.com/audio_raspberry.mp3'),
+(19, 'Plum', 'Mận', '(Noun)', 'https://example.com/audio_plum.mp3'),
+(20, 'Apricot', 'Mơ', '(Noun)', 'https://example.com/audio_apricot.mp3'),
+(21, 'Fig', 'Sung', '(Noun)', 'https://example.com/audio_fig.mp3'),
+(22, 'Dragonfruit', 'Thanh long', '(Noun)', 'https://example.com/audio_dragonfruit.mp3'),
+(23, 'Lychee', 'Vải', '(Noun)', 'https://example.com/audio_lychee.mp3'),
+(24, 'Papaya', 'Đu đủ', '(Noun)', 'https://example.com/audio_papaya.mp3'),
+(29, 'Lemon', 'Chanh', '(Noun)', 'https://res.cloudinary.com/dmcewmxyx/video/upload/v1747577274/dpshopvn/hqlorsav7hqdcj2rkonw.mp3'),
+(30, 'Lemon', 'Chanh', '', 'https://res.cloudinary.com/dmcewmxyx/video/upload/v1747577594/dpshopvn/rkvfjzqdl84hxx0fyf7i.mp3');
 
 --
 -- Indexes for dumped tables
@@ -299,6 +363,24 @@ ALTER TABLE `courses`
 -- Indexes for table `course_types`
 --
 ALTER TABLE `course_types`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `floor1_picture_match`
+--
+ALTER TABLE `floor1_picture_match`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `floor2_maze_popup`
+--
+ALTER TABLE `floor2_maze_popup`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `floor3_listen_choose`
+--
+ALTER TABLE `floor3_listen_choose`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -346,6 +428,24 @@ ALTER TABLE `courses`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
+-- AUTO_INCREMENT for table `floor1_picture_match`
+--
+ALTER TABLE `floor1_picture_match`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT for table `floor2_maze_popup`
+--
+ALTER TABLE `floor2_maze_popup`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `floor3_listen_choose`
+--
+ALTER TABLE `floor3_listen_choose`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT for table `frames`
 --
 ALTER TABLE `frames`
@@ -355,7 +455,7 @@ ALTER TABLE `frames`
 -- AUTO_INCREMENT for table `frame_vocabulary`
 --
 ALTER TABLE `frame_vocabulary`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT for table `lessons`
@@ -373,7 +473,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `vocabulary`
 --
 ALTER TABLE `vocabulary`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- Constraints for dumped tables

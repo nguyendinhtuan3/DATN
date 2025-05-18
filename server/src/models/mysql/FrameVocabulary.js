@@ -19,7 +19,6 @@ FrameVocabulary.init(
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true, allowNull: false },
         frame_id: { type: DataTypes.INTEGER, allowNull: false },
         vocab_id: { type: DataTypes.INTEGER, allowNull: false },
-        position: { type: DataTypes.INTEGER, allowNull: false },
     },
     {
         sequelize,

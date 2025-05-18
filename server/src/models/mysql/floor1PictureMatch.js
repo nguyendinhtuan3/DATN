@@ -15,6 +15,10 @@ Floor1PictureMatch.init(
             type: DataTypes.STRING(255),
             allowNull: false,
         },
+        audio_url: {
+            type: DataTypes.STRING(255),
+            allowNull: false,
+        },
         options: {
             type: DataTypes.JSON,
             allowNull: false,

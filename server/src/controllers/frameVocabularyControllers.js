@@ -26,7 +26,7 @@ router.get('/by-frame/:frameId', async (req, res) => {
         const conn = await db.promise();
         const [rows] = await conn.query(
             `
-            SELECT fv.*, f.title AS frame_title, v.english_word, v.vietnamese_word, v.part_of_speech
+            SELECT fv.*, f.title AS frame_title, v.english_word, v.vietnamese_word, v.part_of_speech, v.audio_url
             FROM frame_vocabulary fv
             JOIN frames f ON fv.frame_id = f.id
             JOIN vocabulary v ON fv.vocab_id = v.id
@@ -55,12 +55,12 @@ router.get('/by-frame/:frameId', async (req, res) => {
 // 📌 Tạo quan hệ khung-từ vựng mới
 router.post('/', verifyRole('admin'), async (req, res) => {
     try {
-        const { frame_id, vocab_id, position } = req.body;
+        const { frame_id, vocab_id } = req.body;
         const conn = await db.promise();
-        const [result] = await conn.query(
-            'INSERT INTO frame_vocabulary (frame_id, vocab_id, position) VALUES (?, ?, ?)',
-            [frame_id, vocab_id, position],
-        );
+        const [result] = await conn.query('INSERT INTO frame_vocabulary (frame_id, vocab_id) VALUES (?,   ?)', [
+            frame_id,
+            vocab_id,
+        ]);
         const [newRelation] = await conn.query('SELECT * FROM frame_vocabulary WHERE id = ?', [result.insertId]);
         res.status(201).json({ status: true, data: newRelation[0] });
     } catch (error) {
@@ -71,12 +71,13 @@ router.post('/', verifyRole('admin'), async (req, res) => {
 // 📌 Cập nhật quan hệ khung-từ vựng
 router.put('/:id', verifyRole('admin'), async (req, res) => {
     try {
-        const { frame_id, vocab_id, position } = req.body;
+        const { frame_id, vocab_id } = req.body;
         const conn = await db.promise();
-        const [result] = await conn.query(
-            'UPDATE frame_vocabulary SET frame_id = ?, vocab_id = ?, position = ? WHERE id = ?',
-            [frame_id, vocab_id, position, req.params.id],
-        );
+        const [result] = await conn.query('UPDATE frame_vocabulary SET frame_id = ?, vocab_id = ? = ? WHERE id = ?', [
+            frame_id,
+            vocab_id,
+            req.params.id,
+        ]);
         if (result.affectedRows === 0) {
             return res.status(404).json({ status: false, message: 'Không tìm thấy quan hệ khung-từ vựng' });
         }
