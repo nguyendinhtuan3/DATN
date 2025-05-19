@@ -18,7 +18,7 @@ const useAuthStore = create((set) => ({
     localStorage.removeItem("access_token");
     localStorage.removeItem("userVouchers");
     localStorage.removeItem("user");
-    set({ isUserLoggedIn: false });
+    set({ isUserLoggedIn: false, user: {} });
   },
 }));
 
