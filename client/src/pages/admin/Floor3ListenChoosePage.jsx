@@ -169,7 +169,7 @@ const Floor3ListenChoosePage = () => {
     };
     const filteredQuestions = questions.filter((q) => q.question.toLowerCase().includes(searchTerm.toLowerCase()));
     return (
-        <div className="flex">
+        <div className="flex min-h-screen bg-gray-100 p-6 gap-4">
             <Sidebar />
             <div className="flex-1 p-6">
                 <h2 className="text-2xl font-semibold mb-4">Tầng 3: Listen & Choose</h2>

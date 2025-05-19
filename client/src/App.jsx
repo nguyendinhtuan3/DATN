@@ -33,25 +33,30 @@ const App = () => {
                     <Route path="/" element={<Home />} />
                     <Route path="/login" element={<LoginPage />} />
 
-                    {user.role === 'admin' ? (
+                    {isUserLoggedIn && (
                         <>
-                            <Route path="/admin/type-course" element={<CourseTypeManagement />} />
-                            <Route path="/admin/users" element={<UserManagement />} />
-                            <Route path="/admin/frames" element={<FramesPage />} />
-                            <Route path="/admin/vocabulary" element={<VocabularyPage />} />
-                            <Route path="/admin/frame-vocabulary" element={<FrameVocabularyPage />} />
-                            <Route path="/admin/floor1" element={<Floor1Manager />} />
-                            <Route path="/admin/floor2" element={<Floor2MazePopupPage />} />
-                            <Route path="/admin/floor3" element={<Floor3ListenChoosePage />} />
-                        </>
-                    ) : user.role === 'teacher' ? (
-                        <>
-                            <Route path="/course-management" element={<CourseManagementPage />} />
-                            <Route path="/lesson-management" element={<LessonManagementPage />} />
-                        </>
-                    ) : (
-                        <>
-                            <Route path="/payment-confirmation" element={<PaymentConfirmPage />} />
+                            {' '}
+                            {user.role === 'admin' ? (
+                                <>
+                                    <Route path="/admin/type-course" element={<CourseTypeManagement />} />
+                                    <Route path="/admin/users" element={<UserManagement />} />
+                                    <Route path="/admin/frames" element={<FramesPage />} />
+                                    <Route path="/admin/vocabulary" element={<VocabularyPage />} />
+                                    <Route path="/admin/frame-vocabulary" element={<FrameVocabularyPage />} />
+                                    <Route path="/admin/floor1" element={<Floor1Manager />} />
+                                    <Route path="/admin/floor2" element={<Floor2MazePopupPage />} />
+                                    <Route path="/admin/floor3" element={<Floor3ListenChoosePage />} />
+                                </>
+                            ) : user.role === 'teacher' ? (
+                                <>
+                                    <Route path="/course-management" element={<CourseManagementPage />} />
+                                    <Route path="/lesson-management" element={<LessonManagementPage />} />
+                                </>
+                            ) : (
+                                <>
+                                    <Route path="/payment-confirmation" element={<PaymentConfirmPage />} />
+                                </>
+                            )}
                         </>
                     )}
                     <Route path="/garden" element={<FramePage />} />
